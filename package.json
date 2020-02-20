@@ -1,0 +1,44 @@
+{
+  "name": "harvester",
+  "version": "0.0.0",
+  "description": "Harvester for OpenActive Feed Data",
+  "main": "src/lib.js",
+  "type": "module",
+  "engines": {
+    "node": "8.11.3"
+  },
+  "bin": {
+    "harvester": "bin/harvester.js"
+  },
+  "scripts": {
+    "build": "npm run clean; npm run build:genversion && npm run build:babel",
+    "build:genversion": "genversion --es6 --semi src/version.js",
+    "clean": "rm -rf dist",
+    "build:babel": "babel src --out-dir dist"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.6.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "genversion": "^2.2.0",
+    "node-fetch": "^2.6.0",
+    "sqlite": "^3.0.3"
+  },
+  "devDependencies": {
+    "eslint": "6.8.0",
+    "babel-cli": "^6.26.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openactive/havester.git"
+  },
+  "keywords": [
+    "OpenActive"
+  ],
+  "author": "Michael Wood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openactive/harvester/issues"
+  },
+  "homepage": "https://github.com/openactive/harvester#readme"
+}

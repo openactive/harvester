@@ -1,0 +1,26 @@
+{
+  "name": "havester-test-server",
+  "version": "0.0.1",
+  "description": "Harvester test server",
+  "main": "src/bin/test-registry",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lorem-fitsum": "git+https://github.com/openactive/lorem-fitsum.git"
+  },
+  "scripts": {
+    "test-service": "node_modules/lorem-fitsum/bin/www & src/bin/test-registry"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openactive/havester.git"
+  },
+  "keywords": [
+    "OpenActive"
+  ],
+  "author": "Michael Wood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openactive/harvester/issues"
+  },
+  "homepage": "https://github.com/openactive/harvester#readme"
+}
