@@ -9,10 +9,23 @@ This is an upgrade and refactoring of the work carried out creating an [Elastics
 
 ## Running the harvester
 
+Hint: use [nvm](https://github.com/nvm-sh/nvm) to manage node versions!
+
 node version > 13 (with esm support & es6)
 
-`node ./src/bin/harvester.js`
+`$ node ./src/bin/harvester.js`
 
 node version < 13
 
-`npm run build`
+```
+$ npm run build
+$ node ./dist/bin/harvester.js
+```
+
+## Running test service
+
+```
+$ cd ./testing/test-service/
+$ npm install
+$ npm run test-service
+```
