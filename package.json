@@ -5,7 +5,7 @@
   "main": "src/lib.js",
   "type": "module",
   "engines": {
-    "node": "8.11.3"
+    "node": "13.9.0"
   },
   "bin": {
     "harvester": "bin/harvester.js"
