@@ -15,7 +15,7 @@ class OpenActiveRpde {
 
   getUpdates() {
     return new Promise(async resolve => {
-      let stateData = await this.activityStore.harvester_state_get_information(this.publisherKey);
+      let stateData = await this.activityStore.stateGet(this.publisherKey);
 
       /* Starting position url for this publisher */
       let dataUrl = new URL(this.publisher['data-url']);
@@ -62,7 +62,7 @@ class OpenActiveRpde {
       if (activityItems.length > 0) {
         const now = new Date().getTime();
         const lastId = activityItems[activityItems.length - 1].id;
-        await this.activityStore.harvester_state_put_information(this.publisherKey, now, lastId);
+        await this.activityStore.stateUpdate(this.publisherKey, now, lastId);
       }
 
       resolve(activityItems);

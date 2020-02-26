@@ -8,27 +8,27 @@ class ActivityStore {
     this.pass = process.env.ELASTICSEARCH_PASSWORD;
     this.esIndex = esIndex;
     this.esHarvesterStateIndex = esHarvesterStateIndex;
-    let client_options = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
+    let clientOptions = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
     if (this.user && this.pass) {
-        client_options['auth'] = { username: this.user, password: this.pass };
+      client_options['auth'] = { username: this.user, password: this.pass };
     }
-    this.client = new Elasticsearch.Client(client_options);
+    this.client = new Elasticsearch.Client(clientOptions);
   }
 
   async delete(publisherKey, activity) {
     try {
-        await this.client.delete({
-          index: this.esIndex,
-          id: publisherKey + "-" + activity.id,
-          refresh: 'wait_for',
-        });
+      await this.client.delete({
+        index: this.esIndex,
+        id: publisherKey + "-" + activity.id,
+        refresh: 'wait_for',
+      });
     } catch (e) {
-        // A 404 here is natural - we may be seeing a delete message from the API for a data item we have never seen before
-        // TODO can we raise errors that aren't a 404?
-      }
+      // A 404 here is natural - we may be seeing a delete message from the API for a data item we have never seen before
+      // TODO can we raise errors that aren't a 404?
+    }
   }
 
-  async update(publisherKey, activity){
+  async update(publisherKey, activity) {
     try {
       console.log(`Adding into ES ${activity.data.name}`);
       await this.client.index({
@@ -37,52 +37,52 @@ class ActivityStore {
         body: activity.data,
         refresh: 'wait_for',
       });
-    } catch(e) {
+    } catch (e) {
       console.log(`Error adding ${e}`);
     }
-
   }
 
-  async harvester_state_get_information(publisher_id) {
+  async stateGet(publisherId) {
     try {
-        let result =  await this.client.get({
-            index: this.esHarvesterStateIndex,
-            id: publisher_id
-        })
-        return result.body._source;
+      const result = await this.client.get({
+        index: this.esHarvesterStateIndex,
+        id: publisherId
+      });
+
+      return result.body._source;
     } catch (e) {
-        // Assuming error is a 404  TODO should check that
-        return { last_timestamp: 0, last_id: 0 };
+      // Assuming error is a 404  TODO should check that
+      return { last_timestamp: 0, last_id: 0 };
     }
   }
 
-  async harvester_state_put_information(publisher_id, last_timestamp, last_id) {
+  async stateUpdate(publisherId, lastTimestamp, lastId) {
     try {
       await this.client.delete({
-          index: this.esHarvesterStateIndex,
-          id: publisher_id,
-          refresh: 'wait_for',
-        });
-    } catch(e){
+        index: this.esHarvesterStateIndex,
+        id: publisherId,
+        refresh: 'wait_for',
+      });
+    } catch (e) {
       // console.log(`"error deleting ${e}`);
     }
 
     try {
-        this.client.index({
-          index: this.esHarvesterStateIndex,
-          id: publisher_id,
-          body: {
-            last_timestamp: last_timestamp,
-            last_id: last_id
-          },
-          refresh: 'wait_for',
-        });
-    } catch(e) {
+      await this.client.index({
+        index: this.esHarvesterStateIndex,
+        id: publisherId,
+        body: {
+          last_timestamp: lastTimestamp,
+          last_id: lastId
+        },
+        refresh: 'wait_for',
+      });
+    } catch (e) {
       console.log(`Error adding ${e}`);
     }
   }
 
-  async setupIndex(){
+  async setupIndex() {
 
     return new Promise(async resolve => {
 
@@ -92,32 +92,32 @@ class ActivityStore {
       });
 
 
-      if (!esIndexExistsQ.body){
+      if (!esIndexExistsQ.body) {
         console.log(`Creating index ${this.esIndex}`);
         const esIndexCreateQ = await this.client.indices.create({
           index: this.esIndex,
           /* body: { "settings": {}, "mappings": {} } */
         });
 
-        if (esIndexCreateQ.error){
+        if (esIndexCreateQ.error) {
           resolve(esIndexCreateQ.error);
         }
       }
 
-      // Meta Index
+      // State Index
       const esHarvesterStateIndexExistsQ = await this.client.indices.exists({
         index: this.esHarvesterStateIndex,
       });
 
 
-      if (!esHarvesterStateIndexExistsQ.body){
+      if (!esHarvesterStateIndexExistsQ.body) {
         console.log(`Creating index ${this.esHarvesterStateIndex}`);
         const esHarvesterStateIndexCreateQ = await this.client.indices.create({
           index: this.esHarvesterStateIndex,
           /* body: { "settings": {}, "mappings": {} } */
         });
 
-        if (esHarvesterStateIndexCreateQ.error){
+        if (esHarvesterStateIndexCreateQ.error) {
           resolve(esHarvesterStateIndexCreateQ.error);
         }
       }
