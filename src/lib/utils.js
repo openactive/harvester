@@ -12,4 +12,11 @@ class Utils {
 
 }
 
+var cache = { postcodes: {}, counter: 0 };
+
+export {
+  cache,
+  Utils,
+};
+
 export default Utils;
