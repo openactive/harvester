@@ -15,33 +15,33 @@ class ActivityStore {
     this.client = new Elasticsearch.Client(client_options);
   }
 
-  async delete(activity) {
+  async delete(publisherKey, activity) {
     return this.client.delete({
       index: this.esIndex,
-      id: activity.id,
+      id: publisherKey + "-" + activity.id,
       refresh: 'wait_for',
     });
   }
 
-  async add(activity){
+  async add(publisherKey, activity){
     return this.client.index({
       index: this.esIndex,
-      id: activity.id,
+      id: publisherKey + "-" + activity.id,
       body: activity.data,
       refresh: 'wait_for',
     });
   }
 
-  async update(activity){
+  async update(publisherKey, activity){
     try {
-      await this.delete(activity);
+      await this.delete(publisherKey, activity);
     } catch(e){
       // console.log(`"error deleting ${e}`);
     }
 
     try {
       console.log(`Adding into ES ${activity.data.name}`);
-      await this.add(activity);
+      await this.add(publisherKey, activity);
     } catch(e) {
       console.log(`Error adding ${e}`);
     }

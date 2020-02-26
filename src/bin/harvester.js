@@ -52,13 +52,13 @@ const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
 
               const pipeLine = new PipeLine(activityItem, async (augmentedActivity) => {
                 /* Pipeline callback */
-                await activityStore.update(augmentedActivity);
+                await activityStore.update(publisherKey, augmentedActivity);
               });
 
               pipeLine.run();
 
             } else if (activityItem.state == 'deleted') {
-              await activityStore.delete(activityItem);
+              await activityStore.delete(publisherKey, activityItem);
             } else {
               console.log("Err unknown activity state");
             }
