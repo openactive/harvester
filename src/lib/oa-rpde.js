@@ -3,8 +3,8 @@ import { URL } from 'url';
 import Utils from './utils.js';
 
 class OpenActiveRpde {
-  constructor(db, publisher, publisherKey, activityCb) {
-    this.db = db;
+  constructor(activityStore, publisher, publisherKey, activityCb) {
+    this.activityStore = activityStore;
     this.publisher = publisher;
     this.publisherKey = publisherKey;
     this.afterTimestamp;
@@ -15,11 +15,7 @@ class OpenActiveRpde {
 
   getUpdates() {
     return new Promise(async resolve => {
-      let stateData = await this.db.get(`SELECT last_timestamp, last_id from rpde_state WHERE publisher_id='${this.publisherKey}'`);
-
-      if (!stateData) {
-        stateData = { last_timestamp: 0, last_id: 0 };
-      }
+      let stateData = await this.activityStore.harvester_state_get_information(this.publisherKey);
 
       /* Starting position url for this publisher */
       let dataUrl = new URL(this.publisher['data-url']);
@@ -66,7 +62,7 @@ class OpenActiveRpde {
       if (activityItems.length > 0) {
         const now = new Date().getTime();
         const lastId = activityItems[activityItems.length - 1].id;
-        this.db.run(`REPLACE INTO rpde_state(publisher_id, last_id, last_timestamp) VALUES ('${this.publisherKey}', '${lastId}', ${now})`);
+        await this.activityStore.harvester_state_put_information(this.publisherKey, now, lastId);
       }
 
       resolve(activityItems);
