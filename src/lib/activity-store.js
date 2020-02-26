@@ -16,32 +16,27 @@ class ActivityStore {
   }
 
   async delete(publisherKey, activity) {
-    return this.client.delete({
-      index: this.esIndex,
-      id: publisherKey + "-" + activity.id,
-      refresh: 'wait_for',
-    });
-  }
-
-  async add(publisherKey, activity){
-    return this.client.index({
-      index: this.esIndex,
-      id: publisherKey + "-" + activity.id,
-      body: activity.data,
-      refresh: 'wait_for',
-    });
+    try {
+        await this.client.delete({
+          index: this.esIndex,
+          id: publisherKey + "-" + activity.id,
+          refresh: 'wait_for',
+        });
+    } catch (e) {
+        // A 404 here is natural - we may be seeing a delete message from the API for a data item we have never seen before
+        // TODO can we raise errors that aren't a 404?
+      }
   }
 
   async update(publisherKey, activity){
     try {
-      await this.delete(publisherKey, activity);
-    } catch(e){
-      // console.log(`"error deleting ${e}`);
-    }
-
-    try {
       console.log(`Adding into ES ${activity.data.name}`);
-      await this.add(publisherKey, activity);
+      await this.client.index({
+        index: this.esIndex,
+        id: publisherKey + "-" + activity.id,
+        body: activity.data,
+        refresh: 'wait_for',
+      });
     } catch(e) {
       console.log(`Error adding ${e}`);
     }
@@ -56,7 +51,7 @@ class ActivityStore {
         })
         return result.body._source;
     } catch (e) {
-        // Assuming error is a 404 - should check that
+        // Assuming error is a 404  TODO should check that
         return { last_timestamp: 0, last_id: 0 };
     }
   }
