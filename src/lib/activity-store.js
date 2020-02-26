@@ -3,11 +3,15 @@ import Elasticsearch from '@elastic/elasticsearch';
 
 class ActivityStore {
 
-  constructor(esIndex){
-    this.user = "test";
-    this.pass = "test";
+  constructor(esIndex, esHarvesterStateIndex){
+    this.user = process.env.ELASTICSEARCH_USERNAME;
+    this.pass = process.env.ELASTICSEARCH_PASSWORD;
     this.esIndex = esIndex;
-    this.client = new Elasticsearch.Client({ node: 'http://localhost:9200' });
+    let client_options = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
+    if (this.user && this.pass) {
+        client_options['auth'] = { username: this.user, password: this.pass };
+    }
+    this.client = new Elasticsearch.Client(client_options);
   }
 
   async delete(activity) {
