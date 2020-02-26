@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { URL } from 'url';
+import Utils from './utils.js';
 
 class OpenActiveRpde {
   constructor(db, publisher, publisherKey, activityCb) {
@@ -30,6 +31,8 @@ class OpenActiveRpde {
 
       /* Traverse all the pages available since our last run */
       while (true) {
+        /* Sleep - avoid hitting publisher's api too hard */
+        await Utils.sleep("oa-rpde-page-iter", 1);
         try {
           let res;
 
