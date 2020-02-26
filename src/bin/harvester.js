@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import PipeLine from '../lib/pipeline.js';
 import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
@@ -8,7 +7,6 @@ import fetch from 'node-fetch';
 const registryUrl = 'https://status.openactive.io/datasets.json';
 const esIndex = 'open-active';
 const esHarvesterStateIndex = 'open-active-harvester-state';
-const databaseName = 'rpde-states.sqlite';
 
 /* Dev  - See testing/test-service */
 
