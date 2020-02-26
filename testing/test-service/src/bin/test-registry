@@ -18,4 +18,14 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('/postcode/:postcode', (req, res) => {
+
+    res.json(
+        { wgs84_lat: 51.50100893647978,
+          wgs84_lon: -0.14158760012261312
+        }
+    );
+
+});
+
 app.listen(3001, () => { console.log("started http://locahost:3001"); } );
