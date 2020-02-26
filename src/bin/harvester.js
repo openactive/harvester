@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 import sqlite from 'sqlite'
 
 const registryUrl = 'https://status.openactive.io/datasets.json';
-
+const esIndex = 'open-active';
 const databaseName = 'rpde-states.sqlite';
 
 /* Dev  - See testing/test-service */
@@ -16,26 +16,22 @@ const databaseName = 'rpde-states.sqlite';
 
 /* End Dev */
 
-/* get registry, get publisher's urls, fetch activities (items),
- put items through pipeline */
-
-const activityStore = new ActivityStore();
+const activityStore = new ActivityStore(esIndex);
 
 (async () => {
+  const activityStoreOK = await activityStore.setupIndex();
+
+  if (activityStoreOK !== true){
+    console.log("failed to setup elastic index");
+    process.exit(1);
+  }
+
   let res = await fetch(registryUrl);
   let registryJson = await res.json();
   const db = await sqlite.open(databaseName);
 
-  /* We may want to split the registry up into groups of Threads */
-  let i = 0;
+  /* We may want to split the registry up into groups of "Threads" */
   for (const publisherKey in registryJson.data) {
-      /* DEBUG */
-      i++;
-      if (i > 20){
-        break;
-      }
-      /* end DEBUG */
-
 
     const publisher = registryJson.data[publisherKey];
 
@@ -44,24 +40,26 @@ const activityStore = new ActivityStore();
       continue;
     }
 
-    (async (publisher) => {
-      console.log("HI");
-      let activitiesFeed = new OpenActiveRpde(db, publisher, publisherKey, (activityItems) => {
+    console.log(`=== Start ${publisherKey}  ===`);
+
+    await (async (publisher) => {
+      let activitiesFeed = new OpenActiveRpde(db, publisher, publisherKey, async (activityItems) => {
 
         /* OpenActive RPDE Page callback */
         for (const activityItem of activityItems) {
+          console.log("Activity item pipe and store");
 
             if (activityItem.state == 'updated'){
 
-              const pipeLine = new PipeLine(activityItem, (augmentedActivity) => {
+              const pipeLine = new PipeLine(activityItem, async (augmentedActivity) => {
                 /* Pipeline callback */
-                activityStore.update(augmentedActivity);
+                await activityStore.update(augmentedActivity);
               });
 
               pipeLine.run();
 
             } else if (activityItem.state == 'deleted') {
-              activityStore.delete(activityItem);
+              await activityStore.delete(activityItem);
             } else {
               console.log("Err unknown activity state");
             }
@@ -70,10 +68,11 @@ const activityStore = new ActivityStore();
 
       });
 
-      activitiesFeed.getUpdates();
-
-
+      /* We don't currently use the output as we're using the CB to get each page at a time instead */
+      let activitiesProcessed = await activitiesFeed.getUpdates();
+      console.log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
 
     })(publisher);
   }
+
 })();
