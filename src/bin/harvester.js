@@ -4,10 +4,10 @@ import PipeLine from '../lib/pipeline.js';
 import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
 import fetch from 'node-fetch';
-import sqlite from 'sqlite'
 
 const registryUrl = 'https://status.openactive.io/datasets.json';
 const esIndex = 'open-active';
+const esHarvesterStateIndex = 'open-active-harvester-state';
 const databaseName = 'rpde-states.sqlite';
 
 /* Dev  - See testing/test-service */
@@ -16,7 +16,7 @@ const databaseName = 'rpde-states.sqlite';
 
 /* End Dev */
 
-const activityStore = new ActivityStore(esIndex);
+const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
 
 (async () => {
   const activityStoreOK = await activityStore.setupIndex();
@@ -28,7 +28,6 @@ const activityStore = new ActivityStore(esIndex);
 
   let res = await fetch(registryUrl);
   let registryJson = await res.json();
-  const db = await sqlite.open(databaseName);
 
   /* We may want to split the registry up into groups of "Threads" */
   for (const publisherKey in registryJson.data) {
@@ -43,7 +42,7 @@ const activityStore = new ActivityStore(esIndex);
     console.log(`=== Start ${publisherKey}  ===`);
 
     await (async (publisher) => {
-      let activitiesFeed = new OpenActiveRpde(db, publisher, publisherKey, async (activityItems) => {
+      let activitiesFeed = new OpenActiveRpde(activityStore, publisher, publisherKey, async (activityItems) => {
 
         /* OpenActive RPDE Page callback */
         for (const activityItem of activityItems) {
