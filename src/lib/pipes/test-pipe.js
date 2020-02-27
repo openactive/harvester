@@ -5,11 +5,11 @@ class TestPipe extends Pipe {
 
   run(){
     return new Promise(async resolve => {
-      console.log(`Running ${this.augmentedActivity.id} - ${this.augmentedActivity.data.name} through ${this.constructor.name}`);
+      console.log(`Running ${this.rpdeItemUpdate.api_id} - ${this.rpdeItemUpdate.data.name} through ${this.constructor.name}`);
       cache.counter++;
       console.log(cache);
-      this.augmentedActivity['test-data'] = '1234';
-      resolve(this.augmentedActivity);
+      this.rpdeItemUpdate['test-data'] = '1234';
+      resolve(this.rpdeItemUpdate);
     });
   }
 }

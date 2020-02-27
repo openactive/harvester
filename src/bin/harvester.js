@@ -2,6 +2,7 @@
 import PipeLine from '../lib/pipeline.js';
 import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
+import RPDEItemUpdate from '../lib/rpde-data.js';
 import fetch from 'node-fetch';
 
 const registryUrl = 'https://status.openactive.io/datasets.json';
@@ -48,9 +49,9 @@ const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
 
             if (activityItem.state == 'updated'){
 
-              const pipeLine = new PipeLine(activityItem, async (augmentedActivity) => {
+              const pipeLine = new PipeLine(new RPDEItemUpdate(activityItem, publisherKey), async (rpdeItemUpdate) => {
                 /* Pipeline callback */
-                await activityStore.update(publisherKey, augmentedActivity);
+                await activityStore.update(rpdeItemUpdate);
               });
 
               pipeLine.run();
