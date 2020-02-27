@@ -19,8 +19,12 @@ class OpenActiveRpde {
 
       /* Starting position url for this publisher */
       let dataUrl = new URL(this.publisher['data-url']);
-      dataUrl.searchParams.set('afterTimestamp', stateData.last_timestamp);
-      dataUrl.searchParams.set('afterId', stateData.last_id);
+      if (stateData.last_timestamp) {
+        dataUrl.searchParams.set('afterTimestamp', stateData.last_timestamp);
+      }
+      if (stateData.last_id) {
+        dataUrl.searchParams.set('afterId', stateData.last_id);
+      }
 
       let activityItems = [];
       let activitiesJson = {};
