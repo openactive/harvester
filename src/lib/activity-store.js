@@ -104,7 +104,8 @@ class ActivityStore {
                   "type": "keyword"
                 },
                 "data": {
-                  "type": "object"
+                  "type": "object",
+                  "dynamic": false
                 },
                 "kind": {
                   "type": "keyword"
