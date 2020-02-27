@@ -1,28 +1,22 @@
 import pipes from './pipes/index.js';
 
 class PipeLine {
-  constructor(activity, pipeOutputCb) {
-    this.activity = activity;
+  constructor(rpdeItemUpdate, pipeOutputCb) {
+    this.rpdeItemUpdate = rpdeItemUpdate;
     this.pipeOutputCb = pipeOutputCb;
   }
 
   run() {
     return new Promise(async resolve => {
-      if (this.activity.state == 'deleted') {
-        this.pipeOutputCb(augmentedActivity);
-      } else {
-        for (const Pipe of pipes) {
-          try {
-            const pipeSection = new Pipe(this.activity);
-
-            const augmentedActivity = await pipeSection.run();
-            this.pipeOutputCb(augmentedActivity);
-
-          } catch (error) {
-            console.log(`Error running data through pipe: ${error}`);
-          }
+      for (const Pipe of pipes) {
+        try {
+          const pipeSection = new Pipe(this.rpdeItemUpdate);
+          this.rpdeItemUpdate = await pipeSection.run();
+        } catch (error) {
+          console.log(`Error running data through pipe: ${error}`);
         }
       }
+      this.pipeOutputCb(this.rpdeItemUpdate);
 
       resolve("All pipes run");
     });
