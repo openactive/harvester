@@ -10,7 +10,7 @@ class ActivityStore {
     this.esHarvesterStateIndex = esHarvesterStateIndex;
     let clientOptions = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
     if (this.user && this.pass) {
-      client_options['auth'] = { username: this.user, password: this.pass };
+      clientOptions['auth'] = { username: this.user, password: this.pass };
     }
     this.client = new Elasticsearch.Client(clientOptions);
   }
