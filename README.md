@@ -29,3 +29,21 @@ $ cd ./testing/test-service/
 $ npm install
 $ npm run test-service
 ```
+
+# Setting up Production servers
+
+## Elastic.co
+
+Set up new instance using AWS, London zone and the rest as default options.
+
+## Heroku
+
+Create a new app via web interface. Europe region.
+
+Link GitHub account and set up deploys from GitHub repository.
+
+Set up Config Vars (Settings section):
+
+* ELASTICSEARCH_USERNAME
+* ELASTICSEARCH_PASSWORD
+* ELASTICSEARCH_URL - full URL, like: https://xxxxxxxxxxxx.eu-west-2.aws.cloud.es.io:9243/
