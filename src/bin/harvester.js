@@ -17,7 +17,7 @@ const esHarvesterStateIndex = 'open-active-harvester-state';
 
 const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
 
-(async () => {
+async function main() {
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){
@@ -73,4 +73,15 @@ const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
     })(publisher);
   }
 
-})();
+}
+
+/* Check if we're being called as a script rather than module */
+if (process.argv[1].indexOf("harvester.js") > 0){
+  main();
+}
+
+/* We can move this to env but we still want sensible defaults */
+export {
+  esIndex,
+  esHarvesterStateIndex,
+};
