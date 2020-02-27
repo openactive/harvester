@@ -52,7 +52,7 @@ class ActivityStore {
       return result.body._source;
     } catch (e) {
       // Assuming error is a 404  TODO should check that
-      return { last_timestamp: 0, last_id: 0 };
+      return { last_timestamp: null, last_id: null };
     }
   }
 
