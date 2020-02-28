@@ -3,22 +3,24 @@ import { URL } from 'url';
 import Utils from './utils.js';
 
 class OpenActiveRpde {
-  constructor(activityStore, publisher, publisherKey, activityCb) {
-    this.activityStore = activityStore;
-    this.publisher = publisher;
+  constructor(publisherKey, feedKey, feedURL, activityStore, activityCb) {
     this.publisherKey = publisherKey;
+    this.feedKey = feedKey;
+    this.feedURL = feedURL;
+    this.activityStore = activityStore;
+    this.activityCb = activityCb;
     this.afterTimestamp;
     this.afterId;
-    this.activityCb = activityCb;
+
   }
 
 
   getUpdates() {
     return new Promise(async resolve => {
-      let stateData = await this.activityStore.stateGet(this.publisherKey);
+      let stateData = await this.activityStore.stateGet(this.publisherKey, this.feedKey);
 
       /* Starting position url for this publisher */
-      let dataUrl = new URL(this.publisher['data-url']);
+      let dataUrl = new URL(this.feedURL);
       if (stateData.last_timestamp) {
         dataUrl.searchParams.set('afterTimestamp', stateData.last_timestamp);
       }
@@ -66,7 +68,7 @@ class OpenActiveRpde {
       if (activityItems.length > 0) {
         const now = new Date().getTime();
         const lastId = activityItems[activityItems.length - 1].id;
-        await this.activityStore.stateUpdate(this.publisherKey, now, lastId);
+        await this.activityStore.stateUpdate(this.publisherKey, this.feedKey, now, lastId);
       }
 
       resolve(activityItems);

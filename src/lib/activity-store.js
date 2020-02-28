@@ -15,11 +15,11 @@ class ActivityStore {
     this.client = new Elasticsearch.Client(clientOptions);
   }
 
-  async delete(publisherKey, activity) {
+  async delete(publisherKey, feedKey, activity) {
     try {
       await this.client.delete({
         index: this.esIndex,
-        id: publisherKey + "-" + activity.id,
+        id: publisherKey + "-" + feedKey + "-" + activity.id,
         refresh: 'wait_for',
       });
     } catch (e) {
@@ -33,7 +33,7 @@ class ActivityStore {
     try {
       await this.client.index({
         index: this.esIndex,
-        id: rpdeItemUpdate.publisher + "-" + rpdeItemUpdate.api_id,
+        id: rpdeItemUpdate.publisher + "-" + rpdeItemUpdate.feed_id + "-" + rpdeItemUpdate.api_id,
         body: rpdeItemUpdate,
         refresh: 'wait_for',
       });
@@ -42,11 +42,11 @@ class ActivityStore {
     }
   }
 
-  async stateGet(publisherId) {
+  async stateGet(publisherId, feedKey) {
     try {
       const result = await this.client.get({
         index: this.esHarvesterStateIndex,
-        id: publisherId
+        id: publisherId + "-" + feedKey
       });
 
       return result.body._source;
@@ -56,11 +56,11 @@ class ActivityStore {
     }
   }
 
-  async stateUpdate(publisherId, lastTimestamp, lastId) {
+  async stateUpdate(publisherId, feedKey, lastTimestamp, lastId) {
     try {
       await this.client.delete({
         index: this.esHarvesterStateIndex,
-        id: publisherId,
+        id: publisherId + "-" + feedKey,
         refresh: 'wait_for',
       });
     } catch (e) {
@@ -70,7 +70,7 @@ class ActivityStore {
     try {
       await this.client.index({
         index: this.esHarvesterStateIndex,
-        id: publisherId,
+        id: publisherId + "-" + feedKey,
         body: {
           last_timestamp: lastTimestamp,
           last_id: lastId
@@ -111,6 +111,9 @@ class ActivityStore {
                   "type": "keyword"
                 },
                 "publisher": {
+                  "type": "keyword"
+                },
+                "feed_id": {
                   "type": "keyword"
                 }
               }

@@ -5,7 +5,7 @@ import ActivityStore from '../lib/activity-store.js';
 import RPDEItemUpdate from '../lib/rpde-data.js';
 import fetch from 'node-fetch';
 
-const registryUrl = 'https://status.openactive.io/datasets.json';
+const registryUrl = 'https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json';
 const esIndex = 'open-active';
 const esHarvesterStateIndex = 'open-active-harvester-state';
 
@@ -38,39 +38,57 @@ async function main() {
       continue;
     }
 
-    console.log(`=== Start ${publisherKey}  ===`);
+    /*
+    Build list of end points.
+    This works with both https://status.openactive.io/datasets.json and our own custom JSON format with the new 'data-urls' key
+    In the end we want feeds to be a dict of key: url eg
+    feeds = { "sessions": "http://feed.opendata/sessions", "facility-uses": "http://feed.opendata/facility-uses" }
+    */
+    let feeds = {};
+    if ('data-urls' in publisher) {
+      feeds = publisher['data-urls'];
+    } else if ('data-url' in publisher) {
+      feeds['all'] = publisher['data-url'];
+    }
 
-    await (async (publisher) => {
-      let activitiesFeed = new OpenActiveRpde(activityStore, publisher, publisherKey, async (activityItems) => {
+    /* Process each end point! */
+    for (const feedKey in feeds) {
 
-        /* OpenActive RPDE Page callback */
-        for (const activityItem of activityItems) {
-          console.log("Activity item pipe and store");
+      console.log(`=== Start ${publisherKey}  ===`);
 
-            if (activityItem.state == 'updated'){
+      await (async (publisher) => {
+        let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
 
-              const pipeLine = new PipeLine(new RPDEItemUpdate(activityItem, publisherKey), async (rpdeItemUpdate) => {
-                /* Pipeline callback */
-                await activityStore.update(rpdeItemUpdate);
-              });
+          /* OpenActive RPDE Page callback */
+          for (const activityItem of activityItems) {
+            console.log("Activity item pipe and store");
 
-              pipeLine.run();
+              if (activityItem.state == 'updated'){
 
-            } else if (activityItem.state == 'deleted') {
-              await activityStore.delete(publisherKey, activityItem);
-            } else {
-              console.log("Err unknown activity state");
-            }
+                const pipeLine = new PipeLine(new RPDEItemUpdate(activityItem, publisherKey, feedKey), async (rpdeItemUpdate) => {
+                  /* Pipeline callback */
+                  await activityStore.update(rpdeItemUpdate);
+                });
 
-        }
+                pipeLine.run();
 
-      });
+              } else if (activityItem.state == 'deleted') {
+                await activityStore.delete(publisherKey, feedKey, activityItem);
+              } else {
+                console.log("Err unknown activity state");
+              }
 
-      /* We don't currently use the output as we're using the CB to get each page at a time instead */
-      let activitiesProcessed = await activitiesFeed.getUpdates();
-      console.log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
+          }
 
-    })(publisher);
+        });
+
+        /* We don't currently use the output as we're using the CB to get each page at a time instead */
+        let activitiesProcessed = await activitiesFeed.getUpdates();
+        console.log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
+
+      })(publisher);
+
+    }
   }
 
 }

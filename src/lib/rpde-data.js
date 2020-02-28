@@ -1,11 +1,12 @@
 
 
 class RPDEItemUpdate {
-  constructor(item, publisher) {
+  constructor(item, publisherKey, feedKey) {
     this.data = item.data;
     this.api_id = item.id;
     this.kind = item.kind;
-    this.publisher = publisher;
+    this.publisher = publisherKey;
+    this.feed_id = feedKey;
   }
 }
 
