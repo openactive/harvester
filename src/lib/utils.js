@@ -11,6 +11,11 @@ class Utils {
   }
 
   static log(message, tag){
+    /*
+    if (!process.env.DEBUG) {
+      return;
+    }*/
+
     if (!tag){
       tag = "";
     }
