@@ -52,11 +52,11 @@ class ActivityStore {
       return result.body._source;
     } catch (e) {
       // Assuming error is a 404  TODO should check that
-      return { last_timestamp: null, last_id: null };
+      return { nextURL: null };
     }
   }
 
-  async stateUpdate(publisherId, feedKey, lastTimestamp, lastId) {
+  async stateUpdate(publisherId, feedKey, nextURL) {
     try {
       await this.client.delete({
         index: this.esHarvesterStateIndex,
@@ -72,8 +72,7 @@ class ActivityStore {
         index: this.esHarvesterStateIndex,
         id: publisherId + "-" + feedKey,
         body: {
-          last_timestamp: lastTimestamp,
-          last_id: lastId
+          nextURL: nextURL
         },
         refresh: 'wait_for',
       });
