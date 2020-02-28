@@ -15,9 +15,9 @@ const esHarvesterStateIndex = 'open-active-harvester-state';
 
 /* End Dev */
 
-const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
 
 async function main() {
+  const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){
