@@ -13,7 +13,7 @@ class PipeLine {
           const pipeSection = new Pipe(this.rpdeItemUpdate);
           this.rpdeItemUpdate = await pipeSection.run();
         } catch (error) {
-          console.log(`Error running data through pipe: ${error}`);
+          Utils.log(`Error running data through pipe ${pipeSection.constructor.name} \n ${error}`);
         }
       }
       this.pipeOutputCb(this.rpdeItemUpdate);

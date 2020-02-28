@@ -1,12 +1,16 @@
 
 
 class RPDEItemUpdate {
-  constructor(item, publisherKey, feedKey) {
-    this.data = item.data;
-    this.api_id = item.id;
-    this.kind = item.kind;
+  constructor(activityItem, publisherKey, feedKey) {
+    this.data = activityItem.data;
+    this.api_id = activityItem.id;
+    this.kind = activityItem.kind;
     this.publisher = publisherKey;
     this.feed_id = feedKey;
+  }
+
+  id(){
+    return this.publisher + "-" + this.feed_id + "-" + this.api_id;
   }
 }
 

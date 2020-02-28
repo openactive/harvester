@@ -30,7 +30,7 @@ class OpenActiveRpde {
         /* Sleep - avoid hitting publisher's api too hard */
         await Utils.sleep("oa-rpde-page-iter", 1);
         try {
-          console.log(`Fetching ${nextURL}`);
+          log(`Fetching ${nextURL}`);
           let res = await fetch(nextURL);
 
           activitiesJson = await res.json();
@@ -45,9 +45,9 @@ class OpenActiveRpde {
 
           nextURL = activitiesJson.next;
 
-          console.log(activityItems.length);
+          log(`Total activities fetched ${activityItems.length}`);
         } catch (er) {
-          console.log(`Issue with ${this.publisherKey} - ${er}`);
+          log(`Issue with ${this.publisherKey} - ${er}`);
           break;
         }
 
@@ -61,6 +61,10 @@ class OpenActiveRpde {
     });
   }
 
+}
+
+function log(msg) {
+  Utils.log(msg, "oa-rpde");
 }
 
 export default OpenActiveRpde;

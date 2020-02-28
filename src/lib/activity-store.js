@@ -15,11 +15,12 @@ class ActivityStore {
     this.client = new Elasticsearch.Client(clientOptions);
   }
 
-  async delete(publisherKey, feedKey, activity) {
+  async delete(rpdeItemUpdate) {
+    log(`${this.esIndex} Deleting ${rpdeItemUpdate.id()}`);
     try {
       await this.client.delete({
         index: this.esIndex,
-        id: publisherKey + "-" + feedKey + "-" + activity.id,
+        id: rpdeItemUpdate.id(),
         refresh: 'wait_for',
       });
     } catch (e) {
@@ -29,16 +30,17 @@ class ActivityStore {
   }
 
   async update(rpdeItemUpdate) {
-    console.log(`Adding into ES ${rpdeItemUpdate.data.name}`);
+    log(`${this.esIndex} Adding/Updating ${rpdeItemUpdate.id()}`);
     try {
       await this.client.index({
         index: this.esIndex,
-        id: rpdeItemUpdate.publisher + "-" + rpdeItemUpdate.feed_id + "-" + rpdeItemUpdate.api_id,
+        id: rpdeItemUpdate.id(),
         body: rpdeItemUpdate,
         refresh: 'wait_for',
       });
     } catch (e) {
-      console.log(`Error adding ${e}`);
+      log(`${this.esIndex} Error Adding/Updating ${rpdeItemUpdate.id()} \n ${e}`);
+      log(rpdeItemUpdate);
     }
   }
 
@@ -67,7 +69,7 @@ class ActivityStore {
         refresh: 'wait_for',
       });
     } catch (e) {
-      console.log(`Error adding ${e}`);
+      log(`${this.esHarvesterStateIndex} Error Updating State ${publisherId} \n ${e}`);
     }
   }
 
@@ -82,7 +84,7 @@ class ActivityStore {
 
 
       if (!esIndexExistsQ.body) {
-        console.log(`Creating index ${this.esIndex}`);
+        log(`Creating index ${this.esIndex}`);
         const esIndexCreateQ = await this.client.indices.create({
           index: this.esIndex,
           body: {
@@ -122,7 +124,7 @@ class ActivityStore {
 
 
       if (!esHarvesterStateIndexExistsQ.body) {
-        console.log(`Creating index ${this.esHarvesterStateIndex}`);
+        log(`Creating index ${this.esHarvesterStateIndex}`);
         const esHarvesterStateIndexCreateQ = await this.client.indices.create({
           index: this.esHarvesterStateIndex,
           /* body: { "settings": {}, "mappings": {} } */
@@ -138,6 +140,10 @@ class ActivityStore {
     });
 
   }
+}
+
+function log(msg) {
+  Utils.log(msg, "activity-store");
 }
 
 export default ActivityStore

@@ -4,6 +4,7 @@ import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
 import RPDEItemUpdate from '../lib/rpde-data.js';
 import fetch from 'node-fetch';
+import Utils from '../lib/utils.js';
 
 const registryUrl = 'https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json';
 const esIndex = 'open-active';
@@ -21,7 +22,7 @@ async function main() {
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){
-    console.log("failed to setup elastic index");
+    log("failed to setup elastic index");
     process.exit(1);
   }
 
@@ -54,18 +55,18 @@ async function main() {
     /* Process each end point! */
     for (const feedKey in feeds) {
 
-      console.log(`=== Start ${publisherKey}  ===`);
+      log(`=== Start ${publisherKey}  ===`);
 
       await (async (publisher) => {
         let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
 
           /* OpenActive RPDE Page callback */
           for (const activityItem of activityItems) {
-            console.log("Activity item pipe and store");
+              let rpdeItemUpdate = new RPDEItemUpdate(activityItem, publisherKey, feedKey);
 
               if (activityItem.state == 'updated'){
 
-                const pipeLine = new PipeLine(new RPDEItemUpdate(activityItem, publisherKey, feedKey), async (rpdeItemUpdate) => {
+                const pipeLine = new PipeLine(rpdeItemUpdate, async (rpdeItemUpdate) => {
                   /* Pipeline callback */
                   await activityStore.update(rpdeItemUpdate);
                 });
@@ -73,9 +74,9 @@ async function main() {
                 pipeLine.run();
 
               } else if (activityItem.state == 'deleted') {
-                await activityStore.delete(publisherKey, feedKey, activityItem);
+                await activityStore.delete(rpdeItemUpdate);
               } else {
-                console.log("Err unknown activity state");
+                log(`Skipping unknown activity state: ${activityItem.state}`);
               }
 
           }
@@ -84,13 +85,17 @@ async function main() {
 
         /* We don't currently use the output as we're using the CB to get each page at a time instead */
         let activitiesProcessed = await activitiesFeed.getUpdates();
-        console.log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
+        log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
 
       })(publisher);
 
     }
   }
 
+}
+
+function log(msg) {
+  Utils.log(msg, "harvester-main");
 }
 
 /* Check if we're being called as a script rather than module */
