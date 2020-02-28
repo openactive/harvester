@@ -58,16 +58,6 @@ class ActivityStore {
 
   async stateUpdate(publisherId, feedKey, nextURL) {
     try {
-      await this.client.delete({
-        index: this.esHarvesterStateIndex,
-        id: publisherId + "-" + feedKey,
-        refresh: 'wait_for',
-      });
-    } catch (e) {
-      // console.log(`"error deleting ${e}`);
-    }
-
-    try {
       await this.client.index({
         index: this.esHarvesterStateIndex,
         id: publisherId + "-" + feedKey,
