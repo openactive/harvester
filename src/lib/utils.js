@@ -32,7 +32,7 @@ class Utils {
 
 }
 
-var cache = { postcodes: {}, counter: 0 };
+var cache = { postcodes: {} };
 
 export {
   cache,
