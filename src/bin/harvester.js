@@ -2,13 +2,14 @@
 import PipeLine from '../lib/pipeline.js';
 import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
-import RPDEItemUpdate from '../lib/rpde-data.js';
+import RPDEItemUpdate from '../lib/rpde-data-update.js';
+import RPDEItemDelete from '../lib/rpde-data-delete.js';
 import fetch from 'node-fetch';
 import Utils from '../lib/utils.js';
 
 const registryUrl = 'https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json';
-const esIndex = 'open-active';
-const esHarvesterStateIndex = 'open-active-harvester-state';
+const esIndex = 'open-active-raw';
+const esHarvesterStateIndex = 'open-active-raw-harvester-state';
 
 /* Dev  - See testing/test-service */
 
@@ -62,23 +63,13 @@ async function main() {
 
           /* OpenActive RPDE Page callback */
           for (const activityItem of activityItems) {
-              let rpdeItemUpdate = new RPDEItemUpdate(activityItem, publisherKey, feedKey);
-
               if (activityItem.state == 'updated'){
-
-                const pipeLine = new PipeLine(rpdeItemUpdate, async (rpdeItemUpdate) => {
-                  /* Pipeline callback */
-                  await activityStore.update(rpdeItemUpdate);
-                });
-
-                pipeLine.run();
-
+                await activityStore.update(new RPDEItemUpdate(activityItem, publisherKey, feedKey));
               } else if (activityItem.state == 'deleted') {
-                await activityStore.delete(rpdeItemUpdate);
+                await activityStore.delete(new RPDEItemDelete(activityItem, publisherKey, feedKey));
               } else {
                 log(`Skipping unknown activity state: ${activityItem.state}`);
               }
-
           }
 
         });
