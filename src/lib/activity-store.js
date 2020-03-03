@@ -17,10 +17,12 @@ class ActivityStore {
 
   async delete(rpdeItemUpdate) {
     log(`${this.esIndex} Deleting ${rpdeItemUpdate.id()}`);
+    rpdeItemUpdate.updated = Date.now();
     try {
-      await this.client.delete({
+      await this.client.index({
         index: this.esIndex,
         id: rpdeItemUpdate.id(),
+        body: rpdeItemUpdate,
         refresh: 'wait_for',
       });
     } catch (e) {
@@ -31,6 +33,7 @@ class ActivityStore {
 
   async update(rpdeItemUpdate) {
     log(`${this.esIndex} Adding/Updating ${rpdeItemUpdate.id()}`);
+    rpdeItemUpdate.updated = Date.now();
     try {
       await this.client.index({
         index: this.esIndex,
@@ -101,11 +104,23 @@ class ActivityStore {
                 "kind": {
                   "type": "keyword"
                 },
-                "publisher": {
+                "data_id": {
+                  "type": "keyword"
+                },
+                "data_type": {
+                  "type": "keyword"
+                },
+                "publisher_id": {
                   "type": "keyword"
                 },
                 "feed_id": {
                   "type": "keyword"
+                },
+                "deleted": {
+                  "type": "boolean"
+                },
+                "updated": {
+                  "type": "date"
                 }
               }
             }
