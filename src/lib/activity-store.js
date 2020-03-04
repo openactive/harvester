@@ -1,17 +1,13 @@
 import Utils from './utils.js';
 import Elasticsearch from '@elastic/elasticsearch';
+import Settings from './settings.js';
 
 class ActivityStore {
 
-  constructor(esIndex, esHarvesterStateIndex, esNormalisedIndex){
-    this.user = process.env.ELASTICSEARCH_USERNAME;
-    this.pass = process.env.ELASTICSEARCH_PASSWORD;
-    this.esIndex = esIndex;
-    this.esHarvesterStateIndex = esHarvesterStateIndex;
-    this.esNormalisedIndex = esNormalisedIndex;
-    let clientOptions = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
-    if (this.user && this.pass) {
-      clientOptions['auth'] = { username: this.user, password: this.pass };
+  constructor(){
+    let clientOptions = { node: Settings.elasticsearchURL };
+    if (Settings.elasticsearchUsername && Settings.elasticsearchPassword) {
+      clientOptions['auth'] = { username: Settings.elasticsearchUsername, password: Settings.elasticsearchPassword };
     }
     this.client = new Elasticsearch.Client(clientOptions);
   }
@@ -19,11 +15,11 @@ class ActivityStore {
   /** Deletes an item of raw data. Used in stage 1.
   Actually we do soft deletes, so it saves it with a flag. **/
   async delete(rpdeItemUpdate) {
-    log(`${this.esIndex} Deleting ${rpdeItemUpdate.id()}`);
+    log(`${Settings.elasticIndexRaw} Deleting ${rpdeItemUpdate.id()}`);
     rpdeItemUpdate.updated = Date.now();
     try {
       await this.client.index({
-        index: this.esIndex,
+        index: Settings.elasticIndexRaw,
         id: rpdeItemUpdate.id(),
         body: rpdeItemUpdate,
         refresh: 'wait_for',
@@ -36,17 +32,17 @@ class ActivityStore {
 
   /** Updates/Creates an item of raw data. Used in stage 1. **/
   async update(rpdeItemUpdate) {
-    log(`${this.esIndex} Adding/Updating ${rpdeItemUpdate.id()}`);
+    log(`${Settings.elasticIndexRaw} Adding/Updating ${rpdeItemUpdate.id()}`);
     rpdeItemUpdate.updated = Date.now();
     try {
       await this.client.index({
-        index: this.esIndex,
+        index: Settings.elasticIndexRaw,
         id: rpdeItemUpdate.id(),
         body: rpdeItemUpdate,
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${this.esIndex} Error Adding/Updating ${rpdeItemUpdate.id()} \n ${e}`);
+      log(`${Settings.elasticIndexRaw} Error Adding/Updating ${rpdeItemUpdate.id()} \n ${e}`);
       log(rpdeItemUpdate);
     }
   }
@@ -55,7 +51,7 @@ class ActivityStore {
   async get(start, count) {
     try {
       return await this.client.search({
-        index: this.esIndex,
+        index: Settings.elasticIndexRaw,
         body: {
           "query": {
             "match_all": {}
@@ -65,23 +61,23 @@ class ActivityStore {
         }
       });
     } catch (e) {
-      log(`${this.esIndex} Error Searching ${e}`);
+      log(`${Settings.elasticIndexRaw} Error Searching ${e}`);
     }
   }
 
 
   /** Updates/Creates an normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
-    log(`${this.esIndex} Adding/Updating ${normalisedEvent.id}`);
+    log(`${Settings.elasticIndexRaw} Adding/Updating ${normalisedEvent.id}`);
     try {
       await this.client.index({
-        index: this.esNormalisedIndex,
+        index: Settings.elasticIndexNormalised,
         id: normalisedEvent.id,
         body: normalisedEvent.data,
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${this.esIndex} Error Adding/Updating ${normalisedEvent.id} \n ${e}`);
+      log(`${Settings.elasticIndexRaw} Error Adding/Updating ${normalisedEvent.id} \n ${e}`);
     }
   }
 
@@ -90,7 +86,7 @@ class ActivityStore {
   async stateGet(publisherId, feedKey) {
     try {
       const result = await this.client.get({
-        index: this.esHarvesterStateIndex,
+        index: Settings.elasticIndexStage1State,
         id: publisherId + "-" + feedKey
       });
 
@@ -106,7 +102,7 @@ class ActivityStore {
   async stateUpdate(publisherId, feedKey, nextURL) {
     try {
       await this.client.index({
-        index: this.esHarvesterStateIndex,
+        index: Settings.elasticIndexStage1State,
         id: publisherId + "-" + feedKey,
         body: {
           nextURL: nextURL
@@ -114,7 +110,7 @@ class ActivityStore {
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${this.esHarvesterStateIndex} Error Updating State ${publisherId} \n ${e}`);
+      log(`${Settings.elasticIndexStage1State} Error Updating State ${publisherId} \n ${e}`);
     }
   }
 
@@ -122,16 +118,16 @@ class ActivityStore {
 
     return new Promise(async resolve => {
 
-      // Main Index
+      // Raw Index
       const esIndexExistsQ = await this.client.indices.exists({
-        index: this.esIndex,
+        index: Settings.elasticIndexRaw,
       });
 
 
       if (!esIndexExistsQ.body) {
-        log(`Creating index ${this.esIndex}`);
+        log(`Creating index ${Settings.elasticIndexRaw}`);
         const esIndexCreateQ = await this.client.indices.create({
-          index: this.esIndex,
+          index: Settings.elasticIndexRaw,
           body: {
             "settings": {},
             "mappings": {
@@ -174,16 +170,16 @@ class ActivityStore {
         }
       }
 
-      // State Index
+      // Stage 1 State Index
       const esHarvesterStateIndexExistsQ = await this.client.indices.exists({
-        index: this.esHarvesterStateIndex,
+        index: Settings.elasticIndexStage1State,
       });
 
 
       if (!esHarvesterStateIndexExistsQ.body) {
-        log(`Creating index ${this.esHarvesterStateIndex}`);
+        log(`Creating index ${Settings.elasticIndexStage1State}`);
         const esHarvesterStateIndexCreateQ = await this.client.indices.create({
-          index: this.esHarvesterStateIndex,
+          index: Settings.elasticIndexStage1State,
           /* body: { "settings": {}, "mappings": {} } */
         });
 
@@ -196,14 +192,14 @@ class ActivityStore {
       
       // Normalised Index
       const esNormalisedIndexExistsQ = await this.client.indices.exists({
-        index: this.esNormalisedIndex,
+        index: Settings.elasticIndexNormalised,
       });
 
 
       if (!esNormalisedIndexExistsQ.body) {
-        log(`Creating index ${this.esNormalisedIndex}`);
+        log(`Creating index ${Settings.elasticIndexNormalised}`);
         const esNormalisedIndexCreateQ = await this.client.indices.create({
-          index: this.esNormalisedIndex,
+          index: Settings.elasticIndexNormalised,
           /* body: { "settings": {}, "mappings": {} } */
         });
 
