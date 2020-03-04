@@ -32,20 +32,13 @@ async function main(){
       log(res.body.hits.hits);
       break;
 
-    case 'delete_all_indexes':
-      res = await client.indices.delete({
-        index: [ esHarvesterStateIndex, esIndex ],
-      });
-      log(res.body);
-      break;
-
     case 'setup_indexes':
       res = await activityStore.setupIndex();
       log(res);
       break;
 
     default:
-      Utils.log("Usage: harvester-dev-tool.js [ list_indexes | list_harvester_states | delete_all_indexes | setup_indexes ]");
+      Utils.log("Usage: harvester-dev-tool.js [ list_indexes | list_harvester_states | setup_indexes ]");
   }
 }
 
