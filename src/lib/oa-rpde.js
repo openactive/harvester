@@ -43,7 +43,7 @@ class OpenActiveRpde {
           activityItems = activityItems.concat(activitiesJson.items);
           this.activityCb(activitiesJson.items);
 
-          nextURL = activitiesJson.next;
+          nextURL = Utils.makeNextURL(this.feedURL, activitiesJson.next);
 
           log(`Total activities fetched ${activityItems.length}`);
         } catch (er) {
