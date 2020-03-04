@@ -75,9 +75,8 @@ async function main() {
 
         });
 
-        /* We don't currently use the output as we're using the CB to get each page at a time instead */
-        let activitiesProcessed = await activitiesFeed.getUpdates();
-        log(`=== Finished ${publisherKey} processed ${activitiesProcessed.length} ===`);
+        await activitiesFeed.getUpdates();
+        log(`=== Finished ${publisherKey} ===`);
 
       })(publisher);
 
