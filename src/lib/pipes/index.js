@@ -1,5 +1,9 @@
 import GeoPipe from './geo-pipe.js';
+import TestPipe from './test-pipe.js';
 
 export default [
-  GeoPipe,
+  // TODO GeoPipe needs written for new system before adding back
+  //GeoPipe,
+  // Comment this out to see some test normalised events in the systew
+  //TestPipe
 ];
