@@ -22,9 +22,6 @@ class OpenActiveRpde {
       /* Starting position url for this publisher */
       let nextURL = new URL(stateData.nextURL ?  stateData.nextURL : this.feedURL);
 
-      let activityItems = [];
-      let activitiesJson = {};
-
       /* Traverse all the pages available since our last run */
       while (true) {
         /* Sleep - avoid hitting publisher's api too hard */
@@ -33,31 +30,30 @@ class OpenActiveRpde {
           log(`Fetching ${nextURL}`);
           let res = await fetch(nextURL);
 
-          activitiesJson = await res.json();
+          let activitiesJson = await res.json();
 
           if (activitiesJson.items.length == 0) {
             break;
           }
 
-          /* This could initially be quite a large number to have in mem ... */
-          activityItems = activityItems.concat(activitiesJson.items);
           this.activityCb(activitiesJson.items);
 
           nextURL = Utils.makeNextURL(this.feedURL, activitiesJson.next);
 
-          log(`Total activities fetched ${activityItems.length}`);
+          // Save Next URL after every page
+          // This is so if process crashes in middle of long feed, we don't start at the start again
+          await this.activityStore.stateUpdate(this.publisherKey, this.feedKey, nextURL);
+
+          log(`${this.publisherKey} - ${this.feedKey} - Finished page with ${activitiesJson.items.length} items`);
         } catch (er) {
-          log(`Issue with ${this.publisherKey} - ${er}`);
+          log(`Issue with ${this.publisherKey} - ${this.feedKey} - ${er}`);
           break;
         }
 
       }
 
-      if (activityItems.length > 0) {
-        await this.activityStore.stateUpdate(this.publisherKey, this.feedKey, nextURL);
-      }
+      resolve();
 
-      resolve(activityItems);
     });
   }
 
