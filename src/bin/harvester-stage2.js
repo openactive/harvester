@@ -3,19 +3,13 @@ import PipeLine from '../lib/pipeline.js';
 import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
 import RawData from '../lib/raw-data.js';
+import Settings from '../lib/settings.js';
 
 import fetch from 'node-fetch';
 import Utils from '../lib/utils.js';
 
-
-const esIndex = 'open-active-raw';
-const esHarvesterStateIndex = 'open-active-raw-harvester-state';
-const esNormalisedIndex = 'open-active-normalised';
-
-
-
 async function main() {
-  const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex, esNormalisedIndex);
+  const activityStore = new ActivityStore();
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){
@@ -71,9 +65,3 @@ function log(msg) {
 if (process.argv[1].indexOf("harvester-stage2.js") > 0){
   main();
 }
-
-/* We can move this to env but we still want sensible defaults */
-export {
-  esIndex,
-  esHarvesterStateIndex,
-};

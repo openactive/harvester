@@ -4,23 +4,13 @@ import OpenActiveRpde from '../lib/oa-rpde.js';
 import ActivityStore from '../lib/activity-store.js';
 import RPDEItemUpdate from '../lib/rpde-data-update.js';
 import RPDEItemDelete from '../lib/rpde-data-delete.js';
+import Settings from '../lib/settings.js';
 import fetch from 'node-fetch';
 import Utils from '../lib/utils.js';
 
-const registryUrl = 'https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json';
-const esIndex = 'open-active-raw';
-const esHarvesterStateIndex = 'open-active-raw-harvester-state';
-const esNormalisedIndex = 'open-active-normalised';
-
-/* Dev  - See testing/test-service */
-
-//const registryUrl = 'http://localhost:3001';
-
-/* End Dev */
-
 
 async function main() {
-  const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex, esNormalisedIndex);
+  const activityStore = new ActivityStore();
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){
@@ -28,7 +18,7 @@ async function main() {
     process.exit(1);
   }
 
-  let res = await fetch(registryUrl);
+  let res = await fetch(Settings.registryURL);
   let registryJson = await res.json();
 
   /* We may want to split the registry up into groups of "Threads" */
@@ -94,8 +84,3 @@ if (process.argv[1].indexOf("harvester.js") > 0){
   main();
 }
 
-/* We can move this to env but we still want sensible defaults */
-export {
-  esIndex,
-  esHarvesterStateIndex,
-};
