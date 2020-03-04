@@ -3,6 +3,9 @@ import { cache } from '../utils.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
+/** This Test pipeline simply creates some Normalised Events as a guideline for devs making other pipelines.
+    If you want to run it, uncomment it in index.js
+    **/
 class TestPipe extends Pipe {
   run(){
     return new Promise(async resolve => {

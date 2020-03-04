@@ -16,6 +16,8 @@ class ActivityStore {
     this.client = new Elasticsearch.Client(clientOptions);
   }
 
+  /** Deletes an item of raw data. Used in stage 1.
+  Actually we do soft deletes, so it saves it with a flag. **/
   async delete(rpdeItemUpdate) {
     log(`${this.esIndex} Deleting ${rpdeItemUpdate.id()}`);
     rpdeItemUpdate.updated = Date.now();
@@ -32,6 +34,7 @@ class ActivityStore {
     }
   }
 
+  /** Updates/Creates an item of raw data. Used in stage 1. **/
   async update(rpdeItemUpdate) {
     log(`${this.esIndex} Adding/Updating ${rpdeItemUpdate.id()}`);
     rpdeItemUpdate.updated = Date.now();
@@ -48,6 +51,7 @@ class ActivityStore {
     }
   }
 
+  /** Gets a page of raw data. Used in stage 2. **/
   async get(start, count) {
     try {
       return await this.client.search({
@@ -66,7 +70,7 @@ class ActivityStore {
   }
 
 
-
+  /** Updates/Creates an normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
     log(`${this.esIndex} Adding/Updating ${normalisedEvent.id}`);
     try {
@@ -81,6 +85,8 @@ class ActivityStore {
     }
   }
 
+
+  /** Gets state for a publisher and feed (next URL). Used in stage 1. **/
   async stateGet(publisherId, feedKey) {
     try {
       const result = await this.client.get({
@@ -95,6 +101,8 @@ class ActivityStore {
     }
   }
 
+
+  /** Saves state for a publisher and feed - saves the next URL. Used in stage 1. **/
   async stateUpdate(publisherId, feedKey, nextURL) {
     try {
       await this.client.index({
