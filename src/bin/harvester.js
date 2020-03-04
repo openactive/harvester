@@ -10,6 +10,7 @@ import Utils from '../lib/utils.js';
 const registryUrl = 'https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json';
 const esIndex = 'open-active-raw';
 const esHarvesterStateIndex = 'open-active-raw-harvester-state';
+const esNormalisedIndex = 'open-active-normalised';
 
 /* Dev  - See testing/test-service */
 
@@ -19,7 +20,7 @@ const esHarvesterStateIndex = 'open-active-raw-harvester-state';
 
 
 async function main() {
-  const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex);
+  const activityStore = new ActivityStore(esIndex, esHarvesterStateIndex, esNormalisedIndex);
   const activityStoreOK = await activityStore.setupIndex();
 
   if (activityStoreOK !== true){

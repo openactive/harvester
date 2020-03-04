@@ -3,11 +3,12 @@ import Elasticsearch from '@elastic/elasticsearch';
 
 class ActivityStore {
 
-  constructor(esIndex, esHarvesterStateIndex){
+  constructor(esIndex, esHarvesterStateIndex, esNormalisedIndex){
     this.user = process.env.ELASTICSEARCH_USERNAME;
     this.pass = process.env.ELASTICSEARCH_PASSWORD;
     this.esIndex = esIndex;
     this.esHarvesterStateIndex = esHarvesterStateIndex;
+    this.esNormalisedIndex = esNormalisedIndex;
     let clientOptions = { node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' };
     if (this.user && this.pass) {
       clientOptions['auth'] = { username: this.user, password: this.pass };
@@ -44,6 +45,39 @@ class ActivityStore {
     } catch (e) {
       log(`${this.esIndex} Error Adding/Updating ${rpdeItemUpdate.id()} \n ${e}`);
       log(rpdeItemUpdate);
+    }
+  }
+
+  async get(start, count) {
+    try {
+      return await this.client.search({
+        index: this.esIndex,
+        body: {
+          "query": {
+            "match_all": {}
+          },
+          "from" : start,
+          "size" : count,
+        }
+      });
+    } catch (e) {
+      log(`${this.esIndex} Error Searching ${e}`);
+    }
+  }
+
+
+
+  async updateNormalised(normalisedEvent) {
+    log(`${this.esIndex} Adding/Updating ${normalisedEvent.id}`);
+    try {
+      await this.client.index({
+        index: this.esNormalisedIndex,
+        id: normalisedEvent.id,
+        body: normalisedEvent.data,
+        refresh: 'wait_for',
+      });
+    } catch (e) {
+      log(`${this.esIndex} Error Adding/Updating ${normalisedEvent.id} \n ${e}`);
     }
   }
 
@@ -147,6 +181,26 @@ class ActivityStore {
 
         if (esHarvesterStateIndexCreateQ.error) {
           resolve(esHarvesterStateIndexCreateQ.error);
+        }
+      }  
+      
+      
+      
+      // Normalised Index
+      const esNormalisedIndexExistsQ = await this.client.indices.exists({
+        index: this.esNormalisedIndex,
+      });
+
+
+      if (!esNormalisedIndexExistsQ.body) {
+        log(`Creating index ${this.esNormalisedIndex}`);
+        const esNormalisedIndexCreateQ = await this.client.indices.create({
+          index: this.esNormalisedIndex,
+          /* body: { "settings": {}, "mappings": {} } */
+        });
+
+        if (esNormalisedIndexCreateQ.error) {
+          resolve(esNormalisedIndexCreateQ.error);
         }
       }
 
