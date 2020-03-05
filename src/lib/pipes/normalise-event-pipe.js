@@ -18,6 +18,7 @@ class NormaliseEventPipe extends Pipe {
         let location = this.parse_location(data.location);
 
         let normalisedEvent = new NormalisedEvent({
+          "origin_id": data.id,
           "name": data.name,
           "description": data.description,
           "event_status": data.eventStatus,
