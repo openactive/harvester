@@ -55,6 +55,9 @@ class ActivityStore {
         body: {
           "query": {
             "match_all": {}
+            // "match": {
+            //   "kind": "Event"
+            // }
           },
           "from" : start,
           "size" : count,
@@ -68,16 +71,16 @@ class ActivityStore {
 
   /** Updates/Creates an normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
-    log(`${Settings.elasticIndexRaw} Adding/Updating ${normalisedEvent.id}`);
+    log(`${Settings.elasticIndexRaw} Adding/Updating ${normalisedEvent.id()}`);
     try {
       await this.client.index({
         index: Settings.elasticIndexNormalised,
-        id: normalisedEvent.id,
-        body: normalisedEvent.data,
+        id: normalisedEvent.id(),
+        body: normalisedEvent.body,
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${Settings.elasticIndexRaw} Error Adding/Updating ${normalisedEvent.id} \n ${e}`);
+      log(`${Settings.elasticIndexRaw} Error Adding/Updating ${normalisedEvent.id()} \n ${e}`);
     }
   }
 
@@ -188,19 +191,31 @@ class ActivityStore {
         }
       }  
       
-      
-      
       // Normalised Index
       const esNormalisedIndexExistsQ = await this.client.indices.exists({
         index: Settings.elasticIndexNormalised,
       });
 
-
       if (!esNormalisedIndexExistsQ.body) {
         log(`Creating index ${Settings.elasticIndexNormalised}`);
         const esNormalisedIndexCreateQ = await this.client.indices.create({
           index: Settings.elasticIndexNormalised,
-          /* body: { "settings": {}, "mappings": {} } */
+           body: { 
+            "settings": {}, 
+            "mappings": {
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "description": {
+                  "type": "keyword"
+                },
+                "event_status": {
+                  "type": "keyword"
+                }
+              }
+            } 
+          } 
         });
 
         if (esNormalisedIndexCreateQ.error) {
