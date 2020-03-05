@@ -15,7 +15,9 @@ const Settings = {
   "mapItURL": "https://mapit.mysociety.org",
   // For dev, can also do
   //"mapItURL": "http://localhost:3001",
-  "mapItAPIKey": process.env.MAPIT_APIKEY
+  "mapItAPIKey": process.env.MAPIT_APIKEY,
+
+  "activityListJSONLD": "https://www.openactive.io/activity-list/activity-list.jsonld"
 }
 
 export default Settings;

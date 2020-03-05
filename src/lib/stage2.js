@@ -17,6 +17,7 @@ async function processStage2() {
     process.exit(1);
   }
 
+  await Utils.loadActivitiesJSONIntoCache();
 
   let start = 0;
   const count = 100;

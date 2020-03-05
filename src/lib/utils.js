@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import Settings from './settings.js';
 
 class Utils {
 
@@ -45,9 +47,25 @@ class Utils {
 
   }
 
+  static async loadActivitiesJSONIntoCache() {
+
+
+    const res = await fetch(Settings.activityListJSONLD);
+    // TODO  detect non 200 responses
+    const activitiesData =  await res.json();
+
+
+    cache.activities = {};
+
+    for(let idx in activitiesData.concept) {
+      cache.activities[activitiesData.concept[idx].id] = activitiesData.concept[idx];
+    }
+
+  }
+
 }
 
-var cache = { postcodes: {} };
+var cache = { postcodes: {}, activities: {} };
 
 export {
   cache,
