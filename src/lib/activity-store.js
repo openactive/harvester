@@ -80,7 +80,7 @@ class ActivityStore {
 
   /** Updates/Creates an normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
-    log(`${Settings.elasticIndexRaw} Adding/Updating ${normalisedEvent.id()}`);
+    log(`${Settings.elasticIndexNormalised} Adding/Updating ${normalisedEvent.id()}`);
     try {
       await this.client.index({
         index: Settings.elasticIndexNormalised,
@@ -89,7 +89,7 @@ class ActivityStore {
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${Settings.elasticIndexRaw} Error Adding/Updating ${normalisedEvent.id()} \n ${e}`);
+      log(`${Settings.elasticIndexNormalised} Error Adding/Updating ${normalisedEvent.id()} \n ${e}`);
     }
   }
 
@@ -245,12 +245,33 @@ class ActivityStore {
             "mappings": {
               "properties": {
                 "name": {
-                  "type": "keyword"
+                  "type": "text"
                 },
                 "description": {
-                  "type": "keyword"
+                  "type": "text"
                 },
                 "event_status": {
+                  "type": "keyword"
+                },
+                "location": {
+                  "type": "geo_point"
+                },
+                "organizer": {
+                  "type": "text"
+                },
+                "start_date": {
+                  "type": "date"
+                },
+                "end_date": {
+                  "type": "date"
+                },
+                "activity": {
+                  "type": "keyword"
+                },
+                "derived_from_type": {
+                  "type": "keyword"
+                },
+                "derived_from_id": {
                   "type": "keyword"
                 }
               }
