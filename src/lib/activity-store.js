@@ -58,15 +58,16 @@ class ActivityStore {
         index: Settings.elasticIndexRaw,
         body: {
           "query": {
-            "range": {
-              "updated": {
-                "gte": updatedLastSeen
-              }
-            // Dev: use when writing a pipeline and you want raw data of one type only
-            //"term": {
-            //   "data_type": {
-            //    "value": "Event"
+            // "range": {
+            //   "updated": {
+            //     "gte": updatedLastSeen
             //   }
+            // },
+            // Dev: use when writing a pipeline and you want raw data of one type only
+            "term": {
+              "data_type": {
+               "value": "ScheduledSession"
+              }
             }
           },
           "sort" : [
@@ -79,6 +80,26 @@ class ActivityStore {
       });
     } catch (e) {
       log(`${Settings.elasticIndexRaw} Error Searching ${e}`);
+    }
+  }
+
+  /** Gets from the raw data with a keyword search **/
+  async getByKeyword(key, value){
+    try {
+      return await this.client.search({
+        index: Settings.elasticIndexRaw,
+        body: {
+          "query": {
+            "term": {
+              [key]: {
+                "value": value
+              }
+            }
+          }
+        }
+      })
+    } catch (e) {
+      log(`${Settings.elasticIndexRaw} Error searching by keyword ${e}`);
     }
   }
 
@@ -249,6 +270,9 @@ class ActivityStore {
             "settings": {}, 
             "mappings": {
               "properties": {
+                "origin_id": {
+                  "type": "keyword"
+                },
                 "name": {
                   "type": "text"
                 },
