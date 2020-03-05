@@ -40,26 +40,6 @@ class NormaliseEventPipe extends Pipe {
     });
   }
 
-  parse_activity(activity){
-    let activities = [];
-    // TODO
-    // Also move this function somewhere else
-    // if (activity.isArray){
-    //   activity.forEach(an_activity => { 
-    //     activities.push(an_activity.prefLabel) 
-    //   });
-    // }else{
-    //   activities.push(activity.prefLabel)
-    // }
-    return activities;
-  }
-
-  parse_location(location){
-    // TODO
-    // Also move this function somewhere else
-    let parsed_location = {};
-    return parsed_location;
-  }
 }
 
 export default NormaliseEventPipe;
