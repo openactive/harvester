@@ -1,15 +1,14 @@
-#!/usr/bin/env node
-import PipeLine from '../lib/pipeline.js';
-import OpenActiveRpde from '../lib/oa-rpde.js';
-import ActivityStore from '../lib/activity-store.js';
-import RPDEItemUpdate from '../lib/rpde-data-update.js';
-import RPDEItemDelete from '../lib/rpde-data-delete.js';
-import Settings from '../lib/settings.js';
+import PipeLine from './pipeline.js';
+import OpenActiveRpde from './oa-rpde.js';
+import ActivityStore from './activity-store.js';
+import RPDEItemUpdate from './rpde-data-update.js';
+import RPDEItemDelete from './rpde-data-delete.js';
+import Settings from './settings.js';
 import fetch from 'node-fetch';
-import Utils from '../lib/utils.js';
+import Utils from './utils.js';
 
 
-async function main() {
+async function processStage1() {
   const activityStore = new ActivityStore();
   const activityStoreOK = await activityStore.setupIndex();
 
@@ -76,11 +75,7 @@ async function main() {
 }
 
 function log(msg) {
-  Utils.log(msg, "harvester-main");
+  Utils.log(msg, "harvester-stage1");
 }
 
-/* Check if we're being called as a script rather than module */
-if (process.argv[1].indexOf("harvester.js") > 0){
-  main();
-}
-
+export default processStage1;
