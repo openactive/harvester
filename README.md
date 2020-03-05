@@ -25,13 +25,13 @@ Hint: use [nvm](https://github.com/nvm-sh/nvm) to manage node versions!
 
 node version > 13 (with esm support & es6)
 
-`$ node ./src/bin/harvester.js`
+`$ node ./src/bin/harvester-stage1.js`
 
 node version < 13
 
 ```
 $ npm run build
-$ node ./dist/bin/harvester.js
+$ node ./dist/bin/harvester-stage1.js
 ```
 
 ### Registry
