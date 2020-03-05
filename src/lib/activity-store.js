@@ -62,6 +62,11 @@ class ActivityStore {
               "updated": {
                 "gte": updatedLastSeen
               }
+            // Dev: use when writing a pipeline and you want raw data of one type only
+            //"term": {
+            //   "data_type": {
+            //    "value": "Event"
+            //   }
             }
           },
           "sort" : [
@@ -254,7 +259,17 @@ class ActivityStore {
                   "type": "keyword"
                 },
                 "location": {
-                  "type": "geo_point"
+                  "properties": {
+                    "coordinates": {
+                      "type": "geo_point"
+                    },
+                    "postcode": {
+                      "type": "keyword"
+                    },
+                    "unitary_authority": {
+                      "type": "keyword"
+                    }
+                  }
                 },
                 "organizer": {
                   "type": "text"

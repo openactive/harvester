@@ -102,3 +102,5 @@ Set up Config Vars (Settings section):
 * ELASTICSEARCH_USERNAME
 * ELASTICSEARCH_PASSWORD
 * ELASTICSEARCH_URL - full URL, like: https://xxxxxxxxxxxx.eu-west-2.aws.cloud.es.io:9243/
+* MAPIT_APIKEY
+

@@ -7,9 +7,15 @@ const Settings = {
   "elasticIndexStage1State": "open-active-raw-harvester-state",
   "elasticIndexNormalised": "open-active-normalised",
   "elasticIndexStage2State": "open-active-stage-2-state",
-  "registryURL": "https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json"
+
+  "registryURL": "https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json",
   // For dev, can also do
-  //"registryURL": "http://localhost:3001'"
+  //"registryURL": "http://localhost:3001",
+
+  "mapItURL": "https://mapit.mysociety.org",
+  // For dev, can also do
+  //"mapItURL": "http://localhost:3001",
+  "mapItAPIKey": process.env.MAPIT_APIKEY
 }
 
 export default Settings;

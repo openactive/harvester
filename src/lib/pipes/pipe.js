@@ -20,6 +20,7 @@ class Pipe {
     This passes the whole activity object through for further processing 
     by the activity augmentation pipe, making it into an array if it wasn't one.
     **/
+    /**
     let activities = [];
     if (activity ==  null){
       // Because we should end up with *some* tags here after the activity augmentation pipe,
@@ -29,8 +30,9 @@ class Pipe {
       activities = [activity];
     }else{
       activities = activity;
-    }
-    return activities;
+    } **/
+    // Current mapping type is keyword, return something that matches
+    return "";
   }
 
   parse_location(location){
@@ -38,7 +40,20 @@ class Pipe {
     This passes the whole location object through for further processing 
     by the geo augmentation pipe.
     **/
-    return location;
+    let r = {};
+
+    if ('geo' in location && 'latitude' in location['geo'] && 'longitude' in location['geo']) {
+      r['coordinates'] = [
+        parseFloat(location['geo']['longitude']),
+        parseFloat(location['geo']['latitude'])
+      ];
+    }
+
+    if ('address' in location && typeof location['address'] == 'object' && 'postalCode' in location['address']) {
+      r['postcode'] = location['address']['postalCode'];
+    }
+
+    return r;
   }
 
   log(msg) {
@@ -50,7 +65,8 @@ class Pipe {
     This passes the whole organization object through for further processing 
     by the organization augmentation pipe.
     **/
-    return organization;
+    // Current mapping type is text, return something that matches
+    return "";
   }
 
 }

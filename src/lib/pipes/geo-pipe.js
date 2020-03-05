@@ -1,47 +1,65 @@
 import Pipe from './pipe.js';
 import { cache } from '../utils.js';
 import fetch from 'node-fetch';
+import Utils from '../utils.js';
+import Settings from '../settings.js';
+
 
 class GeoPipe extends Pipe {
   run(){
     return new Promise(async resolve => {
-      this.log(`Running ${this.rpdeItemUpdate.api_id} - ${this.rpdeItemUpdate.data.name} through ${this.constructor.name}`);
-      let data = this.rpdeItemUpdate.data;
 
-      if (data.location && data.location.geo && data.location.geo.latitude){
-        this.log("Location data already exists!");
-        this.rpdeItemUpdate["location-geo"] = {
-          "latitude": data.location.geo.latitude,
-          "longitude": data.location.geo.longitude
-        }
+      for(let idx in this.normalisedEvents) {
 
-      } else if (data.location && data.location.address && data.location.address.postalCode) {
-        this.log("Looking up postcode data");
-        const postCode = data.location.address.postalCode;
+        if ('postcode' in this.normalisedEvents[idx].body['location']) {
 
-        if (cache.postcodes[postCode]){
-          this.log("Post code CACHE HIT!");
-          this.rpdeItemUpdate['location-geo'] = cache.postcodes[postCode];
-        } else {
-          this.log("Going to postcode API for data");
-          /* DEV TODO api key
-          const res = await fetch("https://mapit.mysociety.org/postcode/"+postCode);
-          see npm run test-service
-          */
-          const res = await fetch("https://localhost:3001/postcode/"+postCode);
-          const postCodeResult =  await res.json();
+          const postCode = this.normalisedEvents[idx].body['location']['postcode'];
 
-          this.rpdeItemUpdate['location-geo'] = {
-            "latitude": postCodeResult.wgs84_lat,
-            "longitude": postCodeResult.wgs84_lon
+          if (cache.postcodes[postCode]){
+
+            Utils.log(`Geopipe cache hit ${postCode}`);
+
+            this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode])
+
+          } else {
+
+            Utils.log(`Geopipe looking up ${postCode}`);
+
+            try {
+              let url = Settings.mapItURL + '/postcode/' + postCode;
+              if (Settings.mapItAPIKey) {
+                url += '?api_key=' + Settings.mapItAPIKey;
+              }
+              const res = await fetch(url);
+              // TODO  detect non 200 responses
+              const postCodeResult =  await res.json();
+
+              if (postCodeResult.wgs84_lon || postCodeResult.wgs84_lat) {
+
+                Utils.log(`Geopipe looking up ${postCode} GOT RESULT`);
+
+                cache.postcodes[postCode] = {
+                  "coordinates": [postCodeResult.wgs84_lon,postCodeResult.wgs84_lat]
+                };
+
+                for(let areaIdx in postCodeResult.areas) {
+                  if (postCodeResult.areas[areaIdx].type_name == "Unitary Authority") {
+                    cache.postcodes[postCode]['unitary_authority'] = postCodeResult.areas[areaIdx].name;
+                  }
+                }
+
+                this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode])
+              }
+
+            } catch (e) {
+              Utils.log(`Geopipe could not get postcode ${postCode} Error \n ${e}`);
+            }
           }
 
-          cache.postcodes[postCode] = this.rpdeItemUpdate['location-geo'];
         }
-      } else {
-        this.log("Can't get postcode insufficient data");
+
       }
-      resolve(this.rpdeItemUpdate);
+      resolve(this.normalisedEvents);
     });
   }
 }
