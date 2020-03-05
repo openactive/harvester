@@ -58,7 +58,14 @@ async function processStage2() {
       await activityStore.stage2StateUpdate(updatedLastSeen);
     }
 
-    if (results['body']['hits']['total']['value'] == 0) {
+    // ----- If reached end, stop
+    if (results['body']['hits']['total']['value'] == 0 && results['body']['hits']['total']['relation'] == "eq") {
+      break;
+    }
+    // Have seen the following response
+    // {"took":0,"timed_out":false,"_shards":{"total":1,"successful":1,"skipped":0,"failed":0},"hits":{"total":{"value":1,"relation":"eq"},"max_score":null,"hits":[]}}
+    // Thanks Elastic - so let's also .......
+    if (results['body']['hits']['hits'].length == 0) {
       break;
     }
 
