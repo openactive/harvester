@@ -20,12 +20,18 @@ async function main() {
 
   let start = 0;
   const count = 100;
+  // updatedLastSeenAtStartOfLoop & updatedLastSeen - we keep updatedLastSeenAtStartOfLoop constant and pass this to query
+  // We use elastics paging to get a fresh set of results each time because that way we don't repeat data items
+  // Alternative is pass updatedLastSeen to activityStore.get instead off updatedLastSeenAtStartOfLoop and have no paging.
+  // But this would repeat 1 data item every loop iteration because of our use of gte in activityStore.get
+  // See activityStore.get for more
+  const updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet();
+  let updatedLastSeen = updatedLastSeenAtStartOfLoop;
 
   while(true) {
 
-
-    log(`Listing raw data ${start}`);
-    const results = await activityStore.get(start, count);
+    log(`Listing raw data start ${start} - updatedLastSeen ${updatedLastSeenAtStartOfLoop}`);
+    const results = await activityStore.get(start, count, updatedLastSeenAtStartOfLoop);
 
     for (const x in results['body']['hits']['hits']) {
       const data = results['body']['hits']['hits'][x];
@@ -33,6 +39,7 @@ async function main() {
       if (!data['_source']['deleted']) {
 
         const rawData = new RawData(data)
+        updatedLastSeen = rawData.meta.updated;
         const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
 
           for (let idx in normalisedEventList) {
@@ -45,6 +52,10 @@ async function main() {
 
       }
 
+    }
+
+    if (updatedLastSeen != updatedLastSeenAtStartOfLoop) {
+      await activityStore.stage2StateUpdate(updatedLastSeen);
     }
 
     if (results['body']['hits']['total']['value'] == 0) {

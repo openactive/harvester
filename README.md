@@ -71,7 +71,11 @@ $ node ./dist/bin/harvester-stage2.js
 
 ### State
 
-Currently stage 2 will always start from scratch every time it is run.
+By default, the stage 2 runner will run incrementally - it will remember how far it got and start from the same place next time.
+
+The state is stored in the Elasticsearch index set in `src/lib/settings.js`, `elasticIndexStage2State` variable.
+
+If you want it to start from scratch, simply delete this index and run again.
 
 ## Running test service
 

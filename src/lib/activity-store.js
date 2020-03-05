@@ -48,17 +48,26 @@ class ActivityStore {
   }
 
   /** Gets a page of raw data. Used in stage 2. **/
-  async get(start, count) {
+  async get(start, count, updatedLastSeen) {
     try {
+      // In this query, we have to use gte not gt because we cant guarantee there is only one item for each timestamp.
+      // If there are 2 with the same timestamp, the previous run might only have processed the 1st.
+      // And thus if we used gt we might miss the 2nd.
+      // This way means we might process same data twice but that's better than missing data.
       return await this.client.search({
         index: Settings.elasticIndexRaw,
         body: {
           "query": {
-            "match_all": {}
-            // "match": {
-            //   "kind": "Event"
-            // }
+            "range": {
+              "updated": {
+                "gte": updatedLastSeen
+              }
+            }
           },
+          "sort" : [
+            { "updated" : {"order" : "asc"}},
+            "_doc"
+          ],
           "from" : start,
           "size" : count,
         }
@@ -114,6 +123,37 @@ class ActivityStore {
       });
     } catch (e) {
       log(`${Settings.elasticIndexStage1State} Error Updating State ${publisherId} \n ${e}`);
+    }
+  }
+
+  /** Gets state for stage 2. **/
+  async stage2StateGet() {
+    try {
+      const result = await this.client.get({
+        index: Settings.elasticIndexStage2State,
+        id: "state"
+      });
+
+      return result.body._source.updatedLastSeen;
+    } catch (e) {
+      // Assuming error is a 404  TODO should check that
+      return 0;
+    }
+  }
+
+  /** Saves state for stage 2. **/
+  async stage2StateUpdate(updatedLastSeen) {
+    try {
+      await this.client.index({
+        index: Settings.elasticIndexStage2State,
+        id: "state",
+        body: {
+          updatedLastSeen: updatedLastSeen
+        },
+        refresh: 'wait_for',
+      });
+    } catch (e) {
+      log(`${Settings.elasticIndexStage1State} Error Updating Stage 2 State \n ${e}`);
     }
   }
 
@@ -221,6 +261,29 @@ class ActivityStore {
         if (esNormalisedIndexCreateQ.error) {
           resolve(esNormalisedIndexCreateQ.error);
         }
+
+
+
+      // Stage 2 State Index
+      const esStage2StateIndexExistsQ = await this.client.indices.exists({
+        index: Settings.elasticIndexStage2State,
+      });
+
+
+      if (!esStage2StateIndexExistsQ.body) {
+        log(`Creating index ${Settings.elasticIndexStage2State}`);
+        const esStage2StateIndexCreateQ = await this.client.indices.create({
+          index: Settings.elasticIndexStage2State,
+          /* body: { "settings": {}, "mappings": {} } */
+        });
+
+        if (esStage2StateIndexCreateQ.error) {
+          resolve(esStage2StateIndexCreateQ.error);
+        }
+      }
+
+
+
       }
 
       // Done
