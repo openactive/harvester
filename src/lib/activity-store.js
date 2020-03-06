@@ -290,7 +290,13 @@ class ActivityStore {
                     "postcode": {
                       "type": "keyword"
                     },
-                    "unitary_authority": {
+                    "locality": {
+                      "type": "keyword"
+                    },
+                    "region": {
+                      "type": "keyword"
+                    },
+                    "country": {
                       "type": "keyword"
                     }
                   }

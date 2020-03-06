@@ -12,11 +12,6 @@ const Settings = {
   // For dev, can also do
   //"registryURL": "http://localhost:3001",
 
-  "mapItURL": "https://mapit.mysociety.org",
-  // For dev, can also do
-  //"mapItURL": "http://localhost:3001",
-  "mapItAPIKey": process.env.MAPIT_APIKEY,
-
   "activityListJSONLD": "https://www.openactive.io/activity-list/activity-list.jsonld"
 }
 

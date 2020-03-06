@@ -19,36 +19,30 @@ class GeoPipe extends Pipe {
 
             Utils.log(`Geopipe cache hit ${postCode}`);
 
-            this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode])
+            this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode]);
 
           } else {
 
             Utils.log(`Geopipe looking up ${postCode}`);
 
             try {
-              let url = Settings.mapItURL + '/postcode/' + postCode;
-              if (Settings.mapItAPIKey) {
-                url += '?api_key=' + Settings.mapItAPIKey;
-              }
+              let url = 'https://postcodes.io/postcodes/' + postCode;
               const res = await fetch(url);
-              // TODO  detect non 200 responses
               const postCodeResult =  await res.json();
 
-              if (postCodeResult.wgs84_lon || postCodeResult.wgs84_lat) {
+              if (postCodeResult.status == 200) {
 
                 Utils.log(`Geopipe looking up ${postCode} GOT RESULT`);
 
                 cache.postcodes[postCode] = {
-                  "coordinates": [postCodeResult.wgs84_lon,postCodeResult.wgs84_lat]
+                  "coordinates": [postCodeResult.result.longitude,postCodeResult.result.latitude],
+                  "locality": postCodeResult.result.admin_district,
+                  "region": postCodeResult.result.region,
+                  "country": postCodeResult.result.country
                 };
 
-                for(let areaIdx in postCodeResult.areas) {
-                  if (postCodeResult.areas[areaIdx].type_name == "Unitary Authority") {
-                    cache.postcodes[postCode]['unitary_authority'] = postCodeResult.areas[areaIdx].name;
-                  }
-                }
+                this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode]);
 
-                this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode])
               }
 
             } catch (e) {
