@@ -21,12 +21,17 @@ async function processStage2() {
 
   let start = 0;
   const count = 100;
+  const maxstart = 9800;
+
   // updatedLastSeenAtStartOfLoop & updatedLastSeen - we keep updatedLastSeenAtStartOfLoop constant and pass this to query
   // We use elastics paging to get a fresh set of results each time because that way we don't repeat data items
   // Alternative is pass updatedLastSeen to activityStore.get instead off updatedLastSeenAtStartOfLoop and have no paging.
   // But this would repeat 1 data item every loop iteration because of our use of gte in activityStore.get
   // See activityStore.get for more
-  const updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet();
+  // HOWEVER
+  // Elastic can't go above a certain paging limit
+  // So every time we get close to that limit we start again
+  let updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet();
   let updatedLastSeen = updatedLastSeenAtStartOfLoop;
 
   while(true) {
@@ -71,6 +76,11 @@ async function processStage2() {
     }
 
     start += count;
+
+    if (start > maxstart) {
+      start = 0;
+      updatedLastSeenAtStartOfLoop = updatedLastSeen;
+    }
 
   }
 
