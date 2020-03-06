@@ -121,7 +121,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,
-      "origin_id": superEventData.id,
+      "data_id": superEventData.id,
       "description": superEventData.description,
       "location": location,
       "activity": activities,
