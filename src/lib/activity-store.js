@@ -58,16 +58,16 @@ class ActivityStore {
         index: Settings.elasticIndexRaw,
         body: {
           "query": {
-            // "range": {
-            //   "updated": {
-            //     "gte": updatedLastSeen
-            //   }
-            // },
-            // Dev: use when writing a pipeline and you want raw data of one type only
-            "term": {
-              "data_type": {
-               "value": "ScheduledSession"
+            "range": {
+              "updated": {
+                "gte": updatedLastSeen
               }
+            // Dev: use when writing a pipeline and you want raw data of one type only
+            // },
+            // "term": {
+            //   "data_type": {
+            //    "value": "CourseInstance"
+            //   }
             }
           },
           "sort" : [
