@@ -40,20 +40,22 @@ class Pipe {
     This passes the whole location object through for further processing 
     by the geo augmentation pipe.
     **/
-    let r = {};
+    if (location !== undefined){
+      let r = {};
 
-    if ('geo' in location && 'latitude' in location['geo'] && 'longitude' in location['geo']) {
-      r['coordinates'] = [
-        parseFloat(location['geo']['longitude']),
-        parseFloat(location['geo']['latitude'])
-      ];
+      if ('geo' in location && 'latitude' in location['geo'] && 'longitude' in location['geo']) {
+        r['coordinates'] = [
+          parseFloat(location['geo']['longitude']),
+          parseFloat(location['geo']['latitude'])
+        ];
+      }
+
+      if ('address' in location && typeof location['address'] == 'object' && 'postalCode' in location['address']) {
+        r['postcode'] = location['address']['postalCode'];
+      }
+
+      return r;
     }
-
-    if ('address' in location && typeof location['address'] == 'object' && 'postalCode' in location['address']) {
-      r['postcode'] = location['address']['postalCode'];
-    }
-
-    return r;
   }
 
   log(msg) {
@@ -65,8 +67,18 @@ class Pipe {
     This passes the whole organization object through for further processing 
     by the organization augmentation pipe.
     **/
-    // Current mapping type is text, return something that matches
-    return "";
+    if (organization !== undefined){
+      // Current mapping type is text, return something that matches
+      return organization.name;
+    }
+  }
+
+  copyPropertyFromSuper(subEvent, superEvent, property){
+    if (subEvent.body[property] === undefined && superEvent.body[property] !== undefined){
+      this.log(`Copying ${property} from ${superEvent.body.derived_from_type} to ${subEvent.body.derived_from_type}`);
+      subEvent.body[property] = superEvent.body[property];
+    }
+    return subEvent;
   }
 
 }

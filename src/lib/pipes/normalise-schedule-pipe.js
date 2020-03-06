@@ -4,10 +4,20 @@ import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
 /** 
-The NormaliseEvent Pipe turns OpenActive Event objects into a
+The NormaliseSchedule Pipe turns OpenActive Schedule objects into a
 normalised form.
+
+Calculate the datetimes for each individual event from the available fields in the Schedule: startTime, endTime, repeatFrequency, byDay, byMonth, byMonthDay, repeatCount, exceptDate
+Foreach set of datetimes:
+Create Event with type that matches scheduledEventType
+Use the datetimes to generate individual event ids according to the idTemplate
+Populate name, description, eventStatus from the parent Schedule
+Add derived_from_type = Schedule and derived_from_id (original Schedule id)
+
+Some schedules don't have an end date, just +1 month
+
 **/
-class NormaliseEventPipe extends Pipe {
+class NormaliseSchedulePipe extends Pipe {
   run(){
     return new Promise(async resolve => {
 
@@ -18,7 +28,7 @@ class NormaliseEventPipe extends Pipe {
         let location = this.parse_location(data.location);
 
         let normalisedEvent = new NormalisedEvent({
-          "data_id": data.id,
+          "origin_id": data.id,
           "name": data.name,
           "description": data.description,
           "event_status": data.eventStatus,

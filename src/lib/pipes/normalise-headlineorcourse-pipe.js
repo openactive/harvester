@@ -4,10 +4,16 @@ import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
 /** 
-The NormaliseEvent Pipe turns OpenActive Event objects into a
-normalised form.
+The NormaliseHeadlineOrCoursePipe turns OpenActive HeadlineEvent
+or CourseInstsance objects into a normalised form.
+
+Create an Event with name, description, start_date, end_date, event_status, has_children from the HeadlineEvent
+If subEvent, see ScheduledSession to NormalisedEvent
+If eventSchedule, see Schedule to NormalisedEvent
+Populated has_children with ids of NormalisedEvents just created
+
 **/
-class NormaliseEventPipe extends Pipe {
+class NormaliseHeadlineOrCoursePipe extends Pipe {
   run(){
     return new Promise(async resolve => {
 
@@ -18,7 +24,6 @@ class NormaliseEventPipe extends Pipe {
         let location = this.parse_location(data.location);
 
         let normalisedEvent = new NormalisedEvent({
-          "data_id": data.id,
           "name": data.name,
           "description": data.description,
           "event_status": data.eventStatus,

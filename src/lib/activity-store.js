@@ -63,9 +63,10 @@ class ActivityStore {
                 "gte": updatedLastSeen
               }
             // Dev: use when writing a pipeline and you want raw data of one type only
-            //"term": {
+            // },
+            // "term": {
             //   "data_type": {
-            //    "value": "Event"
+            //    "value": "CourseInstance"
             //   }
             }
           },
@@ -79,6 +80,26 @@ class ActivityStore {
       });
     } catch (e) {
       log(`${Settings.elasticIndexRaw} Error Searching ${e}`);
+    }
+  }
+
+  /** Gets from the raw data with a keyword search **/
+  async getRawByKeyword(key, value){
+    try {
+      return await this.client.search({
+        index: Settings.elasticIndexRaw,
+        body: {
+          "query": {
+            "term": {
+              [key]: {
+                "value": value
+              }
+            }
+          }
+        }
+      })
+    } catch (e) {
+      log(`${Settings.elasticIndexRaw} Error searching by keyword ${e}`);
     }
   }
 
@@ -249,6 +270,9 @@ class ActivityStore {
             "settings": {}, 
             "mappings": {
               "properties": {
+                "data_id": {
+                  "type": "keyword"
+                },
                 "name": {
                   "type": "text"
                 },
@@ -288,7 +312,13 @@ class ActivityStore {
                 },
                 "derived_from_id": {
                   "type": "keyword"
-                }
+                },
+                "derived_from_parent_type": {
+                  "type": "keyword"
+                },
+                "derived_from_parent_id": {
+                  "type": "keyword"
+                },
               }
             } 
           } 
