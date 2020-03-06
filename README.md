@@ -15,6 +15,19 @@ Stage 2 uses a system of pipelines. Pipelines are called in the order defined in
 
 Before the first pipeline is called, there is an array of normalised events which is empty. Each pipeline has access to the original data and the normalised events created so far. Each pipeline can delete, edit or create normalised events as it wants.  After all pipelines are called, whatever normalised events are left are saved to Elastic.
 
+### Mapping
+
+All types of event are consolidated to a consistent structure called `NormalisedEvent`. We index only the fields that are needed.
+
+* `data_id`: the original value of `id` or `@id` (may be missing)
+* `name`, `description`, `event_status`: correspond to the equivalent Open Active fields
+* `start_date` and `end_date`: full datetimes, from the corresponding fields in the original data or generated from parent objects
+* `location`: an object with `geo_point`, `postcode` and `unitary_authority` extracted by the Geo Pipe
+* `activity`: values from the Activity List, augmented from the original data
+* `organizer`: values from the `organizer` field or derived from the publisher
+* `derived_from_type` and `derived_from_id`: the original type of the main raw data object that the `NormalisedEvent` was extracted from, and the id we generated locally (aka `_id` in elasticsearch)
+* `derived_from_parent_type` and `derived_from_parent_id`: (not always applicable) the original type of the raw data object any additional properties of the `NormalisedEvent` were extracted from - probably a parent/superEvent - and the id we generated locally for it (aka `_id` in elasticsearch)
+
 ## Install
 
 `$ npm install`

@@ -12,7 +12,7 @@ Foreach set of datetimes:
 Create Event with type that matches scheduledEventType
 Use the datetimes to generate individual event ids according to the idTemplate
 Populate name, description, eventStatus from the parent Schedule
-Add derived_from_type and part_of_type = Schedule and derived_from_id and part_of_id (original Schedule id)
+Add derived_from_type = Schedule and derived_from_id (original Schedule id)
 
 Some schedules don't have an end date, just +1 month
 

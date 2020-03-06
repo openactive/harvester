@@ -58,6 +58,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let organizer = this.parse_organization(data.organizer);
 
       let normalisedEvent = new NormalisedEvent({
+        "data_id": data.id,
         "name": data.name,
         "description": data.description,
         "event_status": data.eventStatus,
@@ -99,8 +100,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
         normalisedEvent = pipe.copyPropertyFromSuper(normalisedEvent, superEvent, property);
       });
 
-      normalisedEvent.body.part_of_type = superEvent.body.derived_from_type;
-      normalisedEvent.body.part_of_id = superEvent.body.derived_from_id;
+      normalisedEvent.body.derived_from_parent_type = superEvent.body.derived_from_type;
+      normalisedEvent.body.derived_from_parent_id = superEvent.body.derived_from_id;
 
       this.normalisedEvents.push(normalisedEvent);
 
@@ -141,7 +142,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       const activityStore = new ActivityStore();
       let superEventId = rawData.superEvent;
 
-      const results = await activityStore.getByKeyword("data_id", superEventId);
+      const results = await activityStore.getRawByKeyword("data_id", superEventId);
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
         

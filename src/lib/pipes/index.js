@@ -4,9 +4,9 @@ import NormaliseEventPipe from './normalise-event-pipe.js';
 import NormaliseScheduledSessionPipe from './normalise-scheduledsession-pipe.js';
 
 export default [
-  // Comment this out to see some test normalised events in the systew
+  // Comment this out to see some test normalised events in the system
   // TestPipe
-  // NormaliseEventPipe,
+  NormaliseEventPipe,
   NormaliseScheduledSessionPipe,
-  // GeoPipe
+  GeoPipe
 ];

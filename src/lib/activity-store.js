@@ -84,7 +84,7 @@ class ActivityStore {
   }
 
   /** Gets from the raw data with a keyword search **/
-  async getByKeyword(key, value){
+  async getRawByKeyword(key, value){
     try {
       return await this.client.search({
         index: Settings.elasticIndexRaw,
@@ -270,7 +270,7 @@ class ActivityStore {
             "settings": {}, 
             "mappings": {
               "properties": {
-                "origin_id": {
+                "data_id": {
                   "type": "keyword"
                 },
                 "name": {
@@ -312,7 +312,13 @@ class ActivityStore {
                 },
                 "derived_from_id": {
                   "type": "keyword"
-                }
+                },
+                "derived_from_parent_type": {
+                  "type": "keyword"
+                },
+                "derived_from_parent_id": {
+                  "type": "keyword"
+                },
               }
             } 
           } 
