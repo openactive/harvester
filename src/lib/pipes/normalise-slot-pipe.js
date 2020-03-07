@@ -39,6 +39,7 @@ class NormaliseSlotPipe extends Pipe {
       //       IFU --aggregateFacilityUse--> FU
       //       FU --individualFacilityUse--> [IFU]
       //       not sure if we need to also fetch these for additional data
+      //       but if so, need to beware of recursive loop.
       }else if (data.type == 'FacilityUse' || data.type == 'IndividualFacilityUse'){
 
         if (data.event !== undefined){
@@ -98,7 +99,6 @@ class NormaliseSlotPipe extends Pipe {
 
         normalisedEvent.body.derived_from_parent_type = facilityUse.body.derived_from_type;
         normalisedEvent.body.derived_from_parent_id = facilityUse.body.derived_from_id;
-        normalisedEvent.body.part_of_id = facilityUse.id();
       }
 
       return normalisedEvent;
@@ -114,9 +114,9 @@ class NormaliseSlotPipe extends Pipe {
   parseFacilityUse(raw_id, facilityUseData){
     try{
 
-      let location = this.parse_location(facilityUseData.location);
-      let activities = this.parse_activity(facilityUseData.activity);
-      let provider = this.parse_organization(facilityUseData.provider);
+      let location = this.parseLocation(facilityUseData.location);
+      let activities = this.parseActivity(facilityUseData.activity);
+      let provider = this.parseOrganization(facilityUseData.provider);
 
       let normalisedEvent = new NormalisedEvent({
         "data_id": facilityUseData.id,

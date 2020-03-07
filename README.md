@@ -27,6 +27,7 @@ All types of event are consolidated to a consistent structure called `Normalised
 * `organizer`: values from the `organizer` field or derived from the publisher
 * `derived_from_type` and `derived_from_id`: the original type of the main raw data object that the `NormalisedEvent` was extracted from, and the id we generated locally (aka `_id` in elasticsearch)
 * `derived_from_parent_type` and `derived_from_parent_id`: (not always applicable) the original type of the raw data object any additional properties of the `NormalisedEvent` were extracted from - probably a parent/superEvent - and the id we generated locally for it (aka `_id` in elasticsearch)
+* `part_of_id`: if a NormalisedEvent was derived from an event with a parent that is *also* a NormalisedEvent, put the NormalisedEvent (`_id`) of the parent here
 
 ## Install
 

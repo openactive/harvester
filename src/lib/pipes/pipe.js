@@ -15,12 +15,12 @@ class Pipe {
     });
   }
 
-  is_bookable(eventType){
+  isBookable(eventType){
     /* 'bookable' events need to be created as NormalisedEvents in their own right. */
     return ['Event', 'HeadlineEvent', 'CourseInstance', 'Slot'].includes(eventType);
   }
 
-  parse_activity(activity){
+  parseActivity(activity){
     /**
     This passes the whole activity object through for further processing 
     by the activity augmentation pipe, making it into an array if it wasn't one.
@@ -40,7 +40,7 @@ class Pipe {
     return "";
   }
 
-  parse_location(location){
+  parseLocation(location){
     /**
     This passes the whole location object through for further processing 
     by the geo augmentation pipe.
@@ -67,7 +67,7 @@ class Pipe {
     Utils.log(msg, this.constructor.name);
   }
 
-  parse_organization(organization){
+  parseOrganization(organization){
     /**
     This passes the whole organization object through for further processing 
     by the organization augmentation pipe.
