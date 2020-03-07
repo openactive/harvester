@@ -15,6 +15,11 @@ class Pipe {
     });
   }
 
+  is_bookable(eventType){
+    /* 'bookable' events need to be created as NormalisedEvents in their own right. */
+    return ['Event', 'HeadlineEvent', 'CourseInstance', 'Slot'].includes(eventType);
+  }
+
   parse_activity(activity){
     /**
     This passes the whole activity object through for further processing 
