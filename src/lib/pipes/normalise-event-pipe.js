@@ -35,14 +35,15 @@ class NormaliseEventPipe extends Pipe {
             let parentEvent = pipe.parseEvent(data);
             let normalisedEvent = pipe.parseEvent(subEventData, parentEvent);
 
-            pipe.normalisedEvents.push(normalisedEvent);
-
             // If parent is an Event, HeadlineEvent or CourseInstance, also create
             // a separate Event for it
             let parentType = parentEvent.body.derived_from_type;
-            if (pipe.is_bookable(parentType)){
+            if (pipe.isBookable(parentType)){
+              normalisedEvent.body['part_of_id'] = parentEvent.id();
               pipe.normalisedEvents.push(parentEvent);
             }
+
+            pipe.normalisedEvents.push(normalisedEvent);
           }
         });
 
@@ -56,8 +57,8 @@ class NormaliseEventPipe extends Pipe {
 
   parseEvent(eventData, parentEvent){
     try{
-      let activities = this.parse_activity(eventData.activity);
-      let location = this.parse_location(eventData.location);
+      let activities = this.parseActivity(eventData.activity);
+      let location = this.parseLocation(eventData.location);
       // TODO fixme
       let organizer = eventData.organizer;
       if (organizer === undefined){
