@@ -23,6 +23,13 @@ async function processStage1() {
   /* We may want to split the registry up into groups of "Threads" */
   for (const publisherKey in registryJson.data) {
 
+    /* Dev - uncomment to get data from certain publishers only */
+    let includePublishers = ['britishtriathlon/openactive'];
+    if (!includePublishers.includes(publisherKey)){
+      console.log(`[Dev] Skipping ${publisherKey}`);
+      continue;
+    }
+
     const publisher = registryJson.data[publisherKey];
 
     /* Skip publishers which aren't available or don't use the paging spec */
