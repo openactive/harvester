@@ -9,6 +9,6 @@ export default [
   // TestPipe
   NormaliseEventPipe,
   NormaliseSlotPipe,
-  // NormaliseScheduledSessionPipe,
+  NormaliseScheduledSessionPipe,
   GeoPipe
 ];

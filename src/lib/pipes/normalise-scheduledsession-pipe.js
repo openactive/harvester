@@ -17,28 +17,40 @@ class NormaliseScheduledSessionPipe extends Pipe {
       // The top level event is a ScheduledSession
       if (data.type == 'ScheduledSession'){
 
-        let parsed = await this.parseScheduledSession(data);
+        // See if it is part of a SessionSeries
+        let sessionSeries = undefined;
+        if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
+          // SessionSeries is an ID, need to get the object from the raw data
+          sessionSeries = await this.getSuperEvent(data);
+        }else if (data.superEvent !== undefined){
+          // SessionSeries is embedded
+          sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
+        }
+
+        let normalisedEvent = this.parseScheduledSession(data, sessionSeries);
+        this.normalisedEvents.push(normalisedEvent);
 
       // Or the top level event is anything (but probably a SessionSeries)
       // with ScheduledSession subEvents
       }else if (data.subEvent !== undefined){
 
+        let sessionSeries = this.parseSessionSeries(this.rawData.id, data);
+        let subEvents = [];
         if (!Array.isArray(data.subEvent)){
           let subEvents = [data.subEvent];
         }else{
           let subEvents = data.subEvent;
         }
 
-        for (const subEvent in subEvents){
-          if(subEvent.type == 'ScheduledSession'){
-            // Get data from parent
-            let sessionSeries = await this.parseSessionSeries(this.rawData.id, data);
-            let parsed = await this.parseScheduledSession(subEvent, sessionSeries);
+        for (const subEventData in subEvents){
+          if(subEventData.type == 'ScheduledSession'){
+            let normalisedEvent = this.parseScheduledSession(subEventData, sessionSeries);
+            this.normalisedEvents.push(normalisedEvent);
           }
         }
 
       }else{
-        this.log(`Not processing ${this.rawData.data['type']} data here`);
+        this.log(`Pass: ${this.rawData.data['type']}`);
       }
 
       resolve(this.normalisedEvents);
@@ -52,61 +64,38 @@ class NormaliseScheduledSessionPipe extends Pipe {
   once it has been extracted if necessary.
   **/
   parseScheduledSession(data, sessionSeries){
-    return new Promise(async resolve => {
-      let activities = this.parse_activity(data.activity);
-      let location = this.parse_location(data.location);
-      let organizer = this.parse_organization(data.organizer);
+    let activities = this.parseActivity(data.activity);
+    let location = this.parseLocation(data.location);
+    let organizer = this.parseOrganization(data.organizer);
 
-      let normalisedEvent = new NormalisedEvent({
-        "data_id": data.id,
-        "name": data.name,
-        "description": data.description,
-        "event_status": data.eventStatus,
-        "location": location,
-        "activity": activities,
-        "start_date": data.startDate,
-        "end_date": data.endDate,
-        "organizer": organizer,
-        "derived_from_type": data.type,
-        "derived_from_id": this.rawData.id,
-      }, data);
+    let normalisedEvent = new NormalisedEvent({
+      "data_id": data.id,
+      "name": data.name,
+      "description": data.description,
+      "event_status": data.eventStatus,
+      "location": location,
+      "activity": activities,
+      "start_date": data.startDate,
+      "end_date": data.endDate,
+      "organizer": organizer,
+      "derived_from_type": data.type,
+      "derived_from_id": this.rawData.id,
+    }, data);
 
-      let superEvent = {};
-      // If this ScheduledSession came from a subEvent, its parent's data
-      // got passed in and we can use it.
-      if (sessionSeries !== undefined){
-        superEvent = sessionSeries;
-      }
-
-      // If this ScheduledSession has a superEvent property we can use this
-      // to get parent data
-      if (data.superEvent !== undefined){
-
-        if (typeof(data.superEvent) === 'string'){
-          superEvent = await this.getSuperEvent(data);
-          
-        }else{
-          // Get superEvent if it is nested rather than linked by id
-          // Note: not tested well as haven't seen any data like this yet.
-          superEvent = parseSessionSeries(this.rawData.id, data.superEvent);
-        }
-      }
-
+    if (sessionSeries !== undefined){
       // Copy these properties from the superEvent to the NormalisedEvent made from the
       // ScheduledSession only if they don't already exist there.
       let propertiesToCopy = this.propertiesToCopy();
       const pipe = this;
       propertiesToCopy.forEach(function(property){
-        normalisedEvent = pipe.copyPropertyFromSuper(normalisedEvent, superEvent, property);
+        normalisedEvent = pipe.copyPropertyFromSuper(normalisedEvent, sessionSeries, property);
       });
 
-      normalisedEvent.body.derived_from_parent_type = superEvent.body.derived_from_type;
-      normalisedEvent.body.derived_from_parent_id = superEvent.body.derived_from_id;
+      normalisedEvent.body.derived_from_parent_type = sessionSeries.body.derived_from_type;
+      normalisedEvent.body.derived_from_parent_id = sessionSeries.body.derived_from_id;
+    }
 
-      this.normalisedEvents.push(normalisedEvent);
-
-      resolve(this.normalisedEvents);
-    });
+    return normalisedEvent;
   }
 
   /**
@@ -115,9 +104,9 @@ class NormaliseScheduledSessionPipe extends Pipe {
   if necessary.
   **/
   parseSessionSeries(local_id, superEventData){
-    let location = this.parse_location(superEventData.location);
-    let activities = this.parse_activity(superEventData.activity);
-    let organizer = this.parse_organization(superEventData.organizer);
+    let location = this.parseLocation(superEventData.location);
+    let activities = this.parseActivity(superEventData.activity);
+    let organizer = this.parseOrganization(superEventData.organizer);
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,
