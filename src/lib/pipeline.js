@@ -1,4 +1,5 @@
 import pipes from './pipes/index.js';
+import Utils from './utils.js';
 
 class PipeLine {
   constructor(rawData, pipeOutputCb) {

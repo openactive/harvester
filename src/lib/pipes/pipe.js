@@ -22,22 +22,42 @@ class Pipe {
 
   parseActivity(activity){
     /**
-    This passes the whole activity object through for further processing 
-    by the activity augmentation pipe, making it into an array if it wasn't one.
+    This parses the activity field, which will be an object or an array of
+    objects, and gets the URI of each activity, passing back an array of strings.
+    These are further processed by the ActivityPipe.
     **/
-    /**
+    
+    let rawActivities = [];
     let activities = [];
-    if (activity ==  null){
-      // Because we should end up with *some* tags here after the activity augmentation pipe,
-      // so set it as an array in preparation
-      activities = [];
-    }else if (!Array.isArray(activity)){
-      activities = [activity];
+    if (!Array.isArray(activity)){
+      if (activity !== undefined && activity !== null){
+        rawActivities = [activity];
+      }
     }else{
-      activities = activity;
-    } **/
-    // Current mapping type is keyword, return something that matches
-    return "";
+      rawActivities = activity;
+    }
+    rawActivities.forEach(function(rawActivity){
+      // On the official Activity List
+      // Just use the id so we can get the names and other info from our cache.
+      if (rawActivity.inScheme == 'https://www.openactive.io/activity-list/activity-list.jsonld'){
+        if (rawActivity.id !== undefined){
+          activities.push(rawActivity.id);
+        }
+      }else{
+        // Publisher-owned ActivityList
+        // Not all of these have ids, and for the ones that do we probably
+        // don't want to go and fetch them to get their names, so let's just
+        // use the name in the object.
+        if (rawActivity.prefLabel !== undefined){
+          activities.push(rawActivity.prefLabel);
+        }
+        if (rawActivity.altLabel !== undefined){
+          activities.push(rawActivity.altLabel);
+        }
+      }
+    });
+
+    return activities;
   }
 
   parseLocation(location){
