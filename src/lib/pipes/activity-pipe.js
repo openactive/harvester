@@ -138,16 +138,12 @@ class ActivityPipe extends Pipe {
   }
 
   /**
-  Simple string in string matching, but with a hack to only match
-  complete words, which helps to avoid false positives from substrings.
+  Simple string in string matching, only matches complete words,
+  which helps to avoid false positives from substrings.
   **/
   searchTextForActivity(text, activity){
-    // Pad the activity name with spaces
-    activity = " "+activity+" ";
-    // Replace all non alpha chars with spaces
-    const nonAlpha = /^a-zA-Z\s/;
-    text = text.replace(nonAlpha, " ");
-    let result = text.search(activity) !== -1;
+    const regex = new RegExp("\\b"+activity+"\\b");
+    let result = text.search(regex) !== -1;
     if (result){
       this.log(`Found [${activity}] in "${text}"`);
     }
