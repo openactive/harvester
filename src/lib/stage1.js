@@ -24,11 +24,11 @@ async function processStage1() {
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
-    let includePublishers = ['britishtriathlon/openactive'];
+    /*let includePublishers = ['britishtriathlon/openactive'];
     if (!includePublishers.includes(publisherKey)){
       console.log(`[Dev] Skipping ${publisherKey}`);
       continue;
-    }
+    }*/
 
     const publisher = registryJson.data[publisherKey];
 
