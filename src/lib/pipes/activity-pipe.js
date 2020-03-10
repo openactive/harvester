@@ -9,7 +9,6 @@ class ActivityPipe extends Pipe {
   run(){
     return new Promise(async resolve => {
 
-      let activityList = cache.activities;
       let augmentedActivities = [];
 
       let pipe = this;
@@ -20,7 +19,7 @@ class ActivityPipe extends Pipe {
         eventActivities.forEach(function(activity){
           let activityId = pipe.normaliseActivityId(activity);
 
-          if (activityList[activityId] !== undefined){
+          if (cache.activities[activityId] !== undefined){
             augmentedActivities = augmentedActivities.concat(pipe.getActivityLabels(activityId));
             // Get labels of broader activities too
             augmentedActivities = augmentedActivities.concat(pipe.getBroaderActivities(activityId));
@@ -50,16 +49,15 @@ class ActivityPipe extends Pipe {
   }
 
   /**
-  Most activities in the ActivityList only have a prefLabel but some have
+  Most activities in the cache.activities only have a prefLabel but some have
   altLabel so we should get this too. 
   **/
   getActivityLabels(activityKey){
     let labels = [];
-    let activityList = cache.activities;
-      // Get the labels from the cached ActivityList
-      labels.push(activityList[activityKey]['prefLabel']);
-      if (activityList[activityKey]['altLabel'] !== undefined){
-        activityList[activityKey]['altLabel'].forEach(function(altLabel){
+      // Get the labels from the cached cache.activities
+      labels.push(cache.activities[activityKey]['prefLabel']);
+      if (cache.activities[activityKey]['altLabel'] !== undefined){
+        cache.activities[activityKey]['altLabel'].forEach(function(altLabel){
           labels.push(altLabel);
         });
       }
@@ -67,13 +65,11 @@ class ActivityPipe extends Pipe {
   }
 
   /**
-  Recursively checks activities in the ActivityList for broader field
+  Recursively checks activities in the cache.activities for broader field
   and returns all labels of broader concepts. The broader field is an
-  array of ids that can also be found in the ActivityList.
+  array of ids that can also be found in the cache.activities.
   **/
   getBroaderActivities(activityKeys, activitiesSoFar = []){
-    let activityList = cache.activities;
-
     if (!Array.isArray(activityKeys)){
       activityKeys = [activityKeys];
     }
@@ -81,7 +77,7 @@ class ActivityPipe extends Pipe {
     let pipe = this;
     activityKeys.forEach(function (activityKey){
 
-      let broaderKeys = activityList[activityKey]['broader'];
+      let broaderKeys = cache.activities[activityKey]['broader'];
       if (broaderKeys !== undefined){
         let broaderLabels = [];
         broaderKeys.forEach(function(broaderKey){
@@ -99,21 +95,20 @@ class ActivityPipe extends Pipe {
   }
 
   /**
-  Check for labels from the ActivityList in the name and description
+  Check for labels from the cache.activities in the name and description
   fields of the event, and apply these activities if found.
   TODO: we could do a fuzzy match between the event description
         and the activity definition and look at score to decide whether
         to tag the event with that activity.
   **/
   extractActivities(normalisedEvent){
-    let activityList = cache.activities;
     let labels = [];
     let searchFields = ['name', 'description'];
 
     let pipe = this;
     // TODO: this is not efficient, maybe reindex by label in the cache?
-    for (const id of Object.keys(activityList)) {
-      let activity = activityList[id];
+    for (const id of Object.keys(cache.activities)) {
+      let activity = cache.activities[id];
       searchFields.forEach(function(field){
         if (normalisedEvent.body[field] !== undefined){
           if(pipe.searchTextForActivity(normalisedEvent.body[field].toLowerCase(), activity.prefLabel.toLowerCase())){
@@ -151,7 +146,7 @@ class ActivityPipe extends Pipe {
   }
 
   /**
-  In the ActivityList ids take the form https://openactive.io/activity-list#{id}
+  In the cache.activities ids take the form https://openactive.io/activity-list#{id}
   but some data uses http, www, and/or a forward slash before the #{id}. So let's
   strip these out.
   **/
