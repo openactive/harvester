@@ -54,7 +54,7 @@ async function processStage2() {
 
         });
 
-        pipeLine.run();
+        await pipeLine.run();
 
       }
 
