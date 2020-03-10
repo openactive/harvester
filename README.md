@@ -68,6 +68,10 @@ If you want it to start from scratch for all publishers, simply delete this inde
 
 If you want it to start from scratch for one publisher, look in the index, find the correct record and delete it. Then run again. 
 
+## Sample mode
+
+You can set the `FETCH_MAXIMUM_PAGES_PER_FEED` to a positive number. Use this if you want to download a sample of data from each source, instead of getting all data for each source.
+
 ## Running the harvester - Stage 2
 
 Hint: use [nvm](https://github.com/nvm-sh/nvm) to manage node versions!

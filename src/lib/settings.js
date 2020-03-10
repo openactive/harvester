@@ -7,6 +7,7 @@ const Settings = {
   "elasticIndexStage1State": process.env.ELASTICSEARCH_INDEX_STAGE_1_STATE || "open-active-raw-harvester-state",
   "elasticIndexNormalised": process.env.ELASTICSEARCH_INDEX_NORMALISED || "open-active-normalised",
   "elasticIndexStage2State": process.env.ELASTICSEARCH_INDEX_STAGE_2_STATE || "open-active-stage-2-state",
+  "fetchMaximumPagesPerFeed": process.env.FETCH_MAXIMUM_PAGES_PER_FEED || 0,
 
   "registryURL": "https://raw.githubusercontent.com/openactive/harvester/master/datasets.json",
   // For dev, can also do

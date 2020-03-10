@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 import { URL } from 'url';
 import Utils from './utils.js';
+import Settings from './settings.js';
+
 
 class OpenActiveRpde {
   constructor(publisherKey, feedKey, feedURL, activityStore, activityCb) {
@@ -23,6 +25,7 @@ class OpenActiveRpde {
       let nextURL = new URL(stateData.nextURL ?  stateData.nextURL : this.feedURL);
 
       /* Traverse all the pages available since our last run */
+      let page = 1;
       while (true) {
         /* Sleep - avoid hitting publisher's api too hard */
         await Utils.sleep("oa-rpde-page-iter", 1);
@@ -44,12 +47,16 @@ class OpenActiveRpde {
           // This is so if process crashes in middle of long feed, we don't start at the start again
           await this.activityStore.stateUpdate(this.publisherKey, this.feedKey, nextURL);
 
-          log(`${this.publisherKey} - ${this.feedKey} - Finished page with ${activitiesJson.items.length} items`);
+          log(`${this.publisherKey} - ${this.feedKey} - Finished page ${page} with ${activitiesJson.items.length} items`);
+
         } catch (er) {
           log(`Issue with ${this.publisherKey} - ${this.feedKey} - ${er}`);
           break;
         }
-
+        if (Settings.fetchMaximumPagesPerFeed > 0 && page >= Settings.fetchMaximumPagesPerFeed ) {
+          break
+        }
+        ++page;
       }
 
       resolve();
