@@ -36,7 +36,7 @@ class OpenActiveRpde {
             break;
           }
 
-          this.activityCb(activitiesJson.items);
+          await this.activityCb(activitiesJson.items);
 
           nextURL = Utils.makeNextURL(this.feedURL, activitiesJson.next);
 
