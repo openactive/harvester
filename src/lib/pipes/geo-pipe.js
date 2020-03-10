@@ -11,17 +11,12 @@ class GeoPipe extends Pipe {
 
       for(let idx in this.normalisedEvents) {
 
-        if ('postcode' in this.normalisedEvents[idx].body['location']) {
+        if ('postcode' in this.normalisedEvents[idx].body['location'] && this.normalisedEvents[idx].body['location']['postcode']) {
 
           const postCode = this.normalisedEvents[idx].body['location']['postcode'];
 
-          if (cache.postcodes[postCode]){
-
-            Utils.log(`Geopipe cache hit ${postCode}`);
-
-            this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode]);
-
-          } else {
+          // If not in Cache, try and get it
+          if (!cache.postcodes[postCode]){
 
             Utils.log(`Geopipe looking up ${postCode}`);
 
@@ -41,13 +36,26 @@ class GeoPipe extends Pipe {
                   "country": postCodeResult.result.country
                 };
 
-                this.normalisedEvents[idx].body['location'] = Object.assign(this.normalisedEvents[idx].body['location'], cache.postcodes[postCode]);
-
               }
 
             } catch (e) {
               Utils.log(`Geopipe could not get postcode ${postCode} Error \n ${e}`);
             }
+          }
+
+          // If in Cache now, assign it to data
+          if (cache.postcodes[postCode]){
+
+            Utils.log(`Geopipe cache hit ${postCode}`);
+
+            this.normalisedEvents[idx].body['location']['locality'] = cache.postcodes[postCode]['locality'];
+            this.normalisedEvents[idx].body['location']['region'] = cache.postcodes[postCode]['region'];
+            this.normalisedEvents[idx].body['location']['country'] = cache.postcodes[postCode]['country'];
+            // If data already has coordinates, assume that's better than what postcode look up will return
+            if (!this.normalisedEvents[idx].body['location']['coordinates']) {
+              this.normalisedEvents[idx].body['location']['coordinates'] = cache.postcodes[postCode]['coordinates'];
+            }
+
           }
 
         }
