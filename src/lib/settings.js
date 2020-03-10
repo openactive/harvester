@@ -8,7 +8,7 @@ const Settings = {
   "elasticIndexNormalised": process.env.ELASTICSEARCH_INDEX_NORMALISED || "open-active-normalised",
   "elasticIndexStage2State": process.env.ELASTICSEARCH_INDEX_STAGE_2_STATE || "open-active-stage-2-state",
 
-  "registryURL": "https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json",
+  "registryURL": "https://raw.githubusercontent.com/openactive/harvester/master/datasets.json",
   // For dev, can also do
   //"registryURL": "http://localhost:3001",
 

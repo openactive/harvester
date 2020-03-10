@@ -54,7 +54,7 @@ It will get a list of end points from a URL, defined in `src/lib/settings.js`, `
 
 You can set this URL to `https://status.openactive.io/datasets.json` to only get data from the status page.
 
-However some publishers are not in that feed and some publishers have more than one feed. You can pass a URL of a file that has some extra data, for instance `https://raw.githubusercontent.com/odscjames/openactive-sources/master/datasets.json`.
+However some publishers are not in that feed and some publishers have more than one feed. You can pass a URL of a file that has some extra data, for instance the `datasets.json` file in this repository.
 
 The JSON schema is slightly different (see `data-url` string vs `data-urls` dict) but the code can handle either format.
 
