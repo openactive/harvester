@@ -37,6 +37,14 @@ async function processStage1() {
       continue;
     }
 
+    // Not await - we want the event loop of Node to run all publishers at once 
+    processStage1ForPublisher(publisherKey, publisher, activityStore);
+
+  }
+}
+
+async function processStage1ForPublisher(publisherKey, publisher, activityStore) {
+
     /*
     Build list of end points.
     This works with both https://status.openactive.io/datasets.json and our own custom JSON format with the new 'data-urls' key
@@ -50,10 +58,12 @@ async function processStage1() {
       feeds['all'] = publisher['data-url'];
     }
 
+    log(`=== Start ${publisherKey}  ===`);
+
     /* Process each end point! */
     for (const feedKey in feeds) {
 
-      log(`=== Start ${publisherKey}  ===`);
+      log(`=== Start ${publisherKey} Feed ${feedKey} ===`);
 
       await (async (publisher) => {
         let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
@@ -72,12 +82,14 @@ async function processStage1() {
         });
 
         await activitiesFeed.getUpdates();
-        log(`=== Finished ${publisherKey} ===`);
 
       })(publisher);
 
+      log(`=== Finished ${publisherKey} Feed ${feedKey} ===`);
+
     }
-  }
+
+    log(`=== Finished ${publisherKey} ===`);
 
 }
 
