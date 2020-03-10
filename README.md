@@ -117,3 +117,16 @@ Set up Config Vars (Settings section):
 * ELASTICSEARCH_PASSWORD
 * ELASTICSEARCH_URL - full URL, like: https://xxxxxxxxxxxx.eu-west-2.aws.cloud.es.io:9243/
 
+### Kibana
+
+#### Index Patterns
+
+These need to be set up after some code has been run, so the indexes have been created and they have some data in them.
+
+Go to `/app/kibana#/management/kibana/index_patterns?_g=()`
+
+First create a index pattern for `harvester-raw`.
+* Select `updated` as the Time Filter field name
+
+Then create a index pattern for `harvester-normalised`.
+* Select `start_date` as the Time Filter field name
