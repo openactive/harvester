@@ -19,6 +19,36 @@ async function processStage2() {
 
   await Utils.loadActivitiesJSONIntoCache();
 
+  let res = await fetch(Settings.registryURL);
+  let registryJson = await res.json();
+
+  for (const publisherKey in registryJson.data) {
+
+    /* Dev - uncomment to get data from certain publishers only */
+    /*let includePublishers = ['britishtriathlon/openactive'];
+    if (!includePublishers.includes(publisherKey)){
+      console.log(`[Dev] Skipping ${publisherKey}`);
+      continue;
+    }*/
+
+    const publisher = registryJson.data[publisherKey];
+
+    /* Skip publishers which aren't available or don't use the paging spec */
+    if (!publisher.available || !publisher['uses-paging-spec']){
+      continue;
+    }
+
+    // Not await - we want the event loop of Node to run all publishers at once
+    processStage2ForPublisher(publisherKey, publisher, activityStore);
+
+  }
+
+
+}
+
+
+async function processStage2ForPublisher(publisherKey, publisher, activityStore) {
+
   let start = 0;
   const count = 100;
   const maxstart = 9800;
@@ -31,13 +61,13 @@ async function processStage2() {
   // HOWEVER
   // Elastic can't go above a certain paging limit
   // So every time we get close to that limit we start again
-  let updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet();
+  let updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet(publisherKey);
   let updatedLastSeen = updatedLastSeenAtStartOfLoop;
 
   while(true) {
 
-    log(`Listing raw data start ${start} - updatedLastSeen ${updatedLastSeenAtStartOfLoop}`);
-    const results = await activityStore.get(start, count, updatedLastSeenAtStartOfLoop);
+    log(`Listing raw data publisher ${publisherKey} start ${start} - updatedLastSeen ${updatedLastSeenAtStartOfLoop}`);
+    const results = await activityStore.get(publisherKey, start, count, updatedLastSeenAtStartOfLoop);
 
     for (const x in results['body']['hits']['hits']) {
       const data = results['body']['hits']['hits'][x];
@@ -61,7 +91,7 @@ async function processStage2() {
     }
 
     if (updatedLastSeen != updatedLastSeenAtStartOfLoop) {
-      await activityStore.stage2StateUpdate(updatedLastSeen);
+      await activityStore.stage2StateUpdate(publisherKey, updatedLastSeen);
     }
 
     // ----- If reached end, stop

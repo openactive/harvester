@@ -48,7 +48,7 @@ class ActivityStore {
   }
 
   /** Gets a page of raw data. Used in stage 2. **/
-  async get(start, count, updatedLastSeen) {
+  async get(publisherKey, start, count, updatedLastSeen) {
     try {
       // In this query, we have to use gte not gt because we cant guarantee there is only one item for each timestamp.
       // If there are 2 with the same timestamp, the previous run might only have processed the 1st.
@@ -58,10 +58,23 @@ class ActivityStore {
         index: Settings.elasticIndexRaw,
         body: {
           "query": {
-            "range": {
-              "updated": {
-                "gte": updatedLastSeen
-              }
+            "bool": {
+              "must": [
+                {
+                  "range": {
+                    "updated": {
+                      "gte": updatedLastSeen
+                    }
+                  }
+                },
+                {
+                  "term": {
+                    "publisher_id": {
+                      "value": publisherKey
+                    }
+                  }
+                }
+              ]
             // Dev: use when writing a pipeline and you want raw data of one type only
             // },
             // "term": {
@@ -153,11 +166,11 @@ class ActivityStore {
   }
 
   /** Gets state for stage 2. **/
-  async stage2StateGet() {
+  async stage2StateGet(publisherKey) {
     try {
       const result = await this.client.get({
         index: Settings.elasticIndexStage2State,
-        id: "state"
+        id: publisherKey
       });
 
       return result.body._source.updatedLastSeen;
@@ -168,18 +181,18 @@ class ActivityStore {
   }
 
   /** Saves state for stage 2. **/
-  async stage2StateUpdate(updatedLastSeen) {
+  async stage2StateUpdate(publisherKey, updatedLastSeen) {
     try {
       await this.client.index({
         index: Settings.elasticIndexStage2State,
-        id: "state",
+        id: publisherKey,
         body: {
           updatedLastSeen: updatedLastSeen
         },
         refresh: 'wait_for',
       });
     } catch (e) {
-      log(`${Settings.elasticIndexStage1State} Error Updating Stage 2 State \n ${e}`);
+      log(`${Settings.elasticIndexStage1State} Error Updating Stage 2 State ${publisherKey} \n ${e}`);
     }
   }
 
