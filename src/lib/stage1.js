@@ -20,7 +20,6 @@ async function processStage1() {
   let res = await fetch(Settings.registryURL);
   let registryJson = await res.json();
 
-  /* We may want to split the registry up into groups of "Threads" */
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
