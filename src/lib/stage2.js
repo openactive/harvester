@@ -72,10 +72,11 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
     for (const x in results['body']['hits']['hits']) {
       const data = results['body']['hits']['hits'][x];
 
+      const rawData = new RawData(data);
+      updatedLastSeen = rawData.meta.updated;
+
       if (!data['_source']['deleted']) {
 
-        const rawData = new RawData(data)
-        updatedLastSeen = rawData.meta.updated;
         const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
 
           for (let idx in normalisedEventList) {
@@ -84,7 +85,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
         });
 
-        pipeLine.run();
+        await pipeLine.run();
 
       }
 

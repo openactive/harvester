@@ -18,7 +18,7 @@ class PipeLine {
           Utils.log(`Error running data through pipe ${pipeSection.constructor.name} \n ${error}`);
         }
       }
-      this.pipeOutputCb(normalisedEvents);
+      await this.pipeOutputCb(normalisedEvents);
 
       resolve("All pipes run");
     });
