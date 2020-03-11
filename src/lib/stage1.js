@@ -96,4 +96,9 @@ function log(msg) {
   Utils.log(msg, "harvester-stage1");
 }
 
+export {
+  processStage1,
+  processStage1ForPublisher,
+};
+
 export default processStage1;
