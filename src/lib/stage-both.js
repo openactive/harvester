@@ -3,6 +3,7 @@ import { processStage2ForPublisher } from './stage2.js';
 import ActivityStore from './activity-store.js';
 import Settings from './settings.js';
 import fetch from 'node-fetch';
+import Utils from './utils.js';
 
 
 async function processBothStages() {
@@ -14,6 +15,8 @@ async function processBothStages() {
     log("failed to setup elastic index");
     process.exit(1);
   }
+
+  await Utils.loadActivitiesJSONIntoCache();
 
   let res = await fetch(Settings.registryURL);
   let registryJson = await res.json();
