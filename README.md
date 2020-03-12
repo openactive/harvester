@@ -68,6 +68,12 @@ If you want it to start from scratch for all publishers, simply delete this inde
 
 If you want it to start from scratch for one publisher, look in the index, find the correct record and delete it. Then run again. 
 
+### Seeing Progress
+
+Unfortunately, an RPDE API does not give you indication of how much more data there is to come - only a boolean feedback indicating if it's finished or not.
+
+Thus we can't provide any insight on how long stage 1 will take.
+
 ## Running the harvester - Stage 2
 
 Hint: use [nvm](https://github.com/nvm-sh/nvm) to manage node versions!
@@ -90,6 +96,35 @@ By default, the stage 2 runner will run incrementally - it will remember how far
 The state is stored in the Elasticsearch index set in `src/lib/settings.js`, `elasticIndexStage2State` variable.
 
 If you want it to start from scratch, simply delete this index and run again.
+
+### Seeing Progress
+
+It is possible to work out how much progress stage 2 has made for any publisher. We have not done this in code, so this is just a loose description. 
+
+Look up the `updatedLastSeen` value for a publisher in the index set in `src/lib/settings.js`, `elasticIndexStage2State` variable.
+
+In the raw data index (set in `src/lib/settings.js`, `elasticIndexRaw` variable) count how many documents for this publisher have an `updated` value before and after the `updatedLastSeen` value. From this you can construct a percentage of how much work it has done. It's: `before count` / (`before count` + `after count`)
+
+If there is no `updatedLastSeen` value for a publisher, the answer is 0%.
+
+
+## Running the harvester - Both Stages at once
+
+ 
+Hint: use [nvm](https://github.com/nvm-sh/nvm) to manage node versions!
+
+node version > 13 (with esm support & es6)
+
+`$ node ./src/bin/harvester-bothstages.js`
+
+node version < 13
+
+```
+$ npm run build
+$ node ./dist/bin/harvester-bothstages.js
+```
+
+In this mode, it will work on all publishers at the same time. As soon as it has finished stage 1 for a publisher it will start stage 2 for that publisher. So it may start stage 2 for one publisher while still working on stage 1 for another publisher.
 
 ## Running test service
 
@@ -119,6 +154,8 @@ Link a GitHub account and set up deploys from GitHub repository. Set it up to de
 
 Go to the resources tab. Edit `web` and disable. Edit `worker` and enable.
 
+You only want one worker; currently if you try and scale up the workers to more than 1 they will just duplicate effort.
+
 ### Kibana
 
 #### Index Patterns
@@ -132,3 +169,34 @@ First create a index pattern for `harvester-raw`.
 
 Then create a index pattern for `harvester-normalised`.
 * Select `start_date` as the Time Filter field name
+
+#### Map
+
+Go to `/app/maps#/?_g=()`.
+
+Create a map.
+
+Add layer:
+* Type: Documents
+* Index pattern: `harvester-normalised`
+* Name: `Points`
+
+
+Add another layer:
+* Type: Grid Aggregation
+* Index pattern: `harvester-normalised`
+* Show as: Points
+* Name: `Count`
+* In Layer style change symbol size to 10 to 32 and select a 
+
+
+Click Save (Top Menu) and name the map `Normalised Data`.
+
+
+### Stopping and starting Heroku worker
+
+You may want to do this if you need to change something in an external resource and want the worker to reload this properly.
+
+Go to the resources tab. Edit `worker` and disable. Wait a minute. Edit `worker` and enable.
+
+
