@@ -268,8 +268,8 @@ class ActivityStore {
         if (esHarvesterStateIndexCreateQ.error) {
           resolve(esHarvesterStateIndexCreateQ.error);
         }
-      }  
-      
+      }
+
       // Normalised Index
       const esNormalisedIndexExistsQ = await this.client.indices.exists({
         index: Settings.elasticIndexNormalised,
@@ -279,8 +279,8 @@ class ActivityStore {
         log(`Creating index ${Settings.elasticIndexNormalised}`);
         const esNormalisedIndexCreateQ = await this.client.indices.create({
           index: Settings.elasticIndexNormalised,
-           body: { 
-            "settings": {}, 
+           body: {
+            "settings": {},
             "mappings": {
               "properties": {
                 "data_id": {
@@ -289,11 +289,17 @@ class ActivityStore {
                 "name": {
                   "type": "text"
                 },
+                "name_label" : {
+                  "type" : "keyword"
+                },
                 "description": {
                   "type": "text"
                 },
                 "event_status": {
                   "type": "keyword"
+                },
+                "event_attendance_mode" {
+                  "type" : "keyword"
                 },
                 "location": {
                   "properties": {
@@ -317,6 +323,9 @@ class ActivityStore {
                 "organizer": {
                   "type": "text"
                 },
+                "organizer_label" : {
+                  "type" : "text"
+                },
                 "start_date": {
                   "type": "date"
                 },
@@ -339,8 +348,8 @@ class ActivityStore {
                   "type": "keyword"
                 },
               }
-            } 
-          } 
+            }
+          }
         });
 
         if (esNormalisedIndexCreateQ.error) {
