@@ -12,7 +12,11 @@ const Settings = {
   // For dev, can also do
   //"registryURL": "http://localhost:3001",
 
-  "activityListJSONLD": "https://www.openactive.io/activity-list/activity-list.jsonld"
+  "activityListJSONLD": "https://www.openactive.io/activity-list/activity-list.jsonld",
+
+
+  // This one must be PORT so Heroku will work. https://devcenter.heroku.com/articles/deploying-nodejs#specifying-a-start-script
+  "webServerPort":  process.env.PORT || "8000"
 }
 
 export default Settings;
