@@ -3,7 +3,7 @@ import { cache } from '../utils.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
-/** 
+/**
 The NormaliseEventSeriesPipe turns OpenActive HeadlineEvent
 or CourseInstsance objects into a normalised form.
 
@@ -20,16 +20,20 @@ class NormaliseEventSeriesPipe extends Pipe {
 
         let activities = this.parse_activity(data.activity);
         let location = this.parse_location(data.location);
+        let event_attendance_mode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
         let normalisedEvent = new NormalisedEvent({
           "name": data.name,
+          "name_label": data.name,
           "description": data.description,
           "event_status": data.eventStatus,
           "location": location,
           "activity": activities,
           "start_date": data.startDate,
+          "event_attendance_mode": event_attendance_mode,
           "end_date": data.endDate,
           "organizer": data.organizer.name,
+          "organizer_label": data.organizer.name,
           "derived_from_type": data.type,
           "derived_from_id": this.rawData.id,
         }, data);
