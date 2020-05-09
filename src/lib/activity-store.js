@@ -298,7 +298,7 @@ class ActivityStore {
                 "event_status": {
                   "type": "keyword"
                 },
-                "event_attendance_mode" {
+                "event_attendance_mode": {
                   "type" : "keyword"
                 },
                 "location": {
