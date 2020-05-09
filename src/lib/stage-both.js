@@ -24,7 +24,7 @@ async function processBothStages() {
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
-    let includePublishers = ['playwaze/openactive'];
+    let includePublishers = ['playwaze/opendata'];
     if (!includePublishers.includes(publisherKey)){
       console.log(`[Dev] Skipping ${publisherKey}`);
       continue;
