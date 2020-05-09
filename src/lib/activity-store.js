@@ -324,7 +324,7 @@ class ActivityStore {
                   "type": "text"
                 },
                 "organizer_label" : {
-                  "type" : "text"
+                  "type" : "keyword"
                 },
                 "start_date": {
                   "type": "date"
