@@ -67,7 +67,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let activities = this.parseActivity(data.activity);
     let location = this.parseLocation(data.location);
     let organizer = this.parseOrganization(data.organizer);
-    let event_attendance_mode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+    let event_attendance_mode = data.eventAttendanceMode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
     let normalisedEvent = new NormalisedEvent({
       "data_id": data.id,
@@ -111,7 +111,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let location = this.parseLocation(superEventData.location);
     let activities = this.parseActivity(superEventData.activity);
     let organizer = this.parseOrganization(superEventData.organizer);
-    let event_attendance_mode ? superEventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+    let event_attendance_mode = superEventData.eventAttendanceMode ? superEventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,

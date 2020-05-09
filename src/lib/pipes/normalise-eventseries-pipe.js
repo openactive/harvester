@@ -20,7 +20,7 @@ class NormaliseEventSeriesPipe extends Pipe {
 
         let activities = this.parse_activity(data.activity);
         let location = this.parse_location(data.location);
-        let event_attendance_mode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+        let event_attendance_mode = data.eventAttendanceMode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
         let normalisedEvent = new NormalisedEvent({
           "name": data.name,

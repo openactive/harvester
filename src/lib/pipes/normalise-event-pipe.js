@@ -12,7 +12,7 @@ class NormaliseEventPipe extends Pipe {
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      if (data.type == 'Event' || data.type == 'OnDemandEvent'){
+      if (data.type == 'Event' || data.type == 'OnDemandEvent '){
 
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
@@ -68,7 +68,7 @@ class NormaliseEventPipe extends Pipe {
       }else{
         organizer = organizer.name;
       }
-      let event_attendance_mode ? eventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+      let event_attendance_mode = eventData.eventAttendanceMode ? eventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
       let normalisedEvent = new NormalisedEvent({
         "data_id": eventData.id,
