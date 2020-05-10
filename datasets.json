@@ -10283,8 +10283,10 @@
             "publisher-url": "https://playwaze.com",
             "data-url": "https://playwaze.com/Webservices/Playwazeservice.svc/Groupplay/GetOpenActiveData",
             "data-urls": {
-              "all":"https://playwaze.com/Webservices/Playwazeservice.svc/Groupplay/GetOpenActiveData"
-            },
+              "events": "https://playwaze.com/OpenData/Events",
+              "session-series": "https://playwaze.com/OpenData/SessionSeries",
+              "schedules-sessions":"https://playwaze.com/OpenData/ScheduledSessions",
+              "on-demand-events":"https://playwaze.com/OpenData/OnDemand"            },
             "documentation-url": "https://github.com/playwaze/opendata",
             "license-name": "Creative Commons Attribution Licence (CC-BY v4.0)",
             "license-url": "https://creativecommons.org/licenses/by/4.0/",
