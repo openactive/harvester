@@ -10281,7 +10281,7 @@
             "description": "Courses and sessions from the Playwaze app",
             "publisher-name": "Playwaze Ltd",
             "publisher-url": "https://playwaze.com",
-            "data-url": "https://playwaze.com/Webservices/Playwazeservice.svc/Groupplay/GetOpenActiveData",
+            "data-url": "https://playwaze.com/OpenData/Events",
             "data-urls": {
               "events": "https://playwaze.com/OpenData/Events",
               "session-series": "https://playwaze.com/OpenData/SessionSeries",
