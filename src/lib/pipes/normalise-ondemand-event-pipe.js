@@ -12,7 +12,9 @@ class NormaliseOnDemandEventPipe extends Pipe {
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      data['updated'] = this.rawData['modified'];
+      let modded = this.rawData['modified'];
+      data['updated'] = modded;
+      this.log(`Adding ${modded} to data`);
       if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
 
         let normalisedEvent = this.parseEvent(data);
