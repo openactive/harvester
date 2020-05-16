@@ -332,6 +332,9 @@ class ActivityStore {
                 "end_date": {
                   "type": "date"
                 },
+                "updated" : {
+                  "type" : "date"
+                },
                 "activity": {
                   "type": "keyword"
                 },
