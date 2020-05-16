@@ -60,7 +60,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
       // TODO: TH - this code is replicated across EventSeries, SessionSeries, and HeadlineEvent
       // classes. Refactor to avoid repetition.
       let activities = this.parseActivity(eventData.activity);
-      let location = this.parseLocation(eventData["beta:affiliatedLocation"]]);
+      let location = this.parseLocation(eventData["beta:affiliatedLocation"]);
       // TODO fixme
       let organizer = eventData.organizer;
       if (organizer === undefined){
