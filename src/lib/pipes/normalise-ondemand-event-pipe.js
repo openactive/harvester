@@ -92,6 +92,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
         "organizer_label": organizer,
         "derived_from_type": eventData.type,
         "derived_from_id": this.rawData.id,
+        "updated" : eventData.updated
       }, eventData);
 
       if (parentEvent !== undefined){
