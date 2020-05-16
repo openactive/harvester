@@ -88,7 +88,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
         "organizer_label": organizer,
-        "derived_from_type": eventData.type,
+        "derived_from_type": "OnDemandEvent",
         "derived_from_id": this.rawData.id,
         "updated" : eventData.updated
       }, eventData);
