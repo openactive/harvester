@@ -14,7 +14,6 @@ class NormaliseEventPipe extends Pipe {
       let data = this.rawData.data
       if (data.type == 'Event' || data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
         this.log('Condition passed with ${ data.type }');
-        this.log('Condition passed with ${ data['@type']');
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
         // TODO: in theory regular Events might have subEvent or superEvent
