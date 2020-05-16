@@ -85,7 +85,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
         "event_status": eventData.eventStatus,
         "location": location,
         "activity": activities,
-        "start_date": eventData.startDate,
+        "start_date": eventData.startDate ? eventData.startDate : eventData.updated,
         "end_date": eventData.endDate,
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
