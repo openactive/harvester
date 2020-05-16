@@ -68,7 +68,7 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
 
       await (async (publisher) => {
         let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
-
+          log('Length of activity items is ${activityItems.length}')
           /* OpenActive RPDE Page callback */
           for (const activityItem of activityItems) {
               if (activityItem.state == 'updated'){
