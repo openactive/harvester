@@ -116,4 +116,4 @@ class NormaliseOnDemandEventPipe extends Pipe {
 
 }
 
-export default NormaliseEventPipe;
+export default NormaliseOnDemandEventPipe;
