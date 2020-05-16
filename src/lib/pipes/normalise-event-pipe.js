@@ -13,7 +13,6 @@ class NormaliseEventPipe extends Pipe {
 
       let data = this.rawData.data
       if (data.type == 'Event'){
-
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
         // TODO: in theory regular Events might have subEvent or superEvent
