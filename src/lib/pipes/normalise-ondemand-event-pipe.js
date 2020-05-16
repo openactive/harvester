@@ -12,11 +12,13 @@ class NormaliseOnDemandEventPipe extends Pipe {
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      let modded = this.rawData['modified'];
-      data['updated'] = modded;
-      this.log(`Adding ${modded} to data`);
+
       if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
 
+        let modded = this.rawData['modified'];
+        data['updated'] = modded;
+        this.log('*************************');
+        this.log(`Adding ${modded} to data`);
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
         // TODO: in theory regular Events might have subEvent or superEvent
