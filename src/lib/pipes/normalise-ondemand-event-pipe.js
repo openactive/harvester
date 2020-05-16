@@ -16,7 +16,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
       if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
 
         let annoyed = JSON.stringify(this.rawData);
-        this.log(annoyed);
+        this.log(annoyed + "!!!!");
         let modded = this.rawData['updated'];
         data['updated'] = modded;
         this.log('*************************');
