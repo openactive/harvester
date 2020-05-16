@@ -17,7 +17,7 @@ class NormaliseOnDemandEventPipe extends Pipe {
 
         let annoyed = JSON.stringify(this.rawData);
         this.log(annoyed + "!!!!");
-        let modded = this.rawData['updated'];
+        let modded = this.rawData['meta']['updated'];
         data['updated'] = modded;
         this.log('*************************');
         this.log(`Adding ${modded} to data`);
