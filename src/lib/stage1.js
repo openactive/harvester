@@ -58,8 +58,6 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
     }
 
     log(`=== Start ${publisherKey}  ===`);
-    log('==============================');
-    log(`=== going through ${feeds} ===`);
 
     /* Process each end point! */
     for (const feedKey in feeds) {

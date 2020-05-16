@@ -15,12 +15,10 @@ class NormaliseOnDemandEventPipe extends Pipe {
 
       if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
 
-        let annoyed = JSON.stringify(this.rawData);
-        this.log(annoyed + "!!!!");
+        // TODO: for some reason start dates aren't being given on this event type
+        // Sense-check this. For the moment using 'updated' as a proxy.
         let modded = this.rawData['meta']['updated'];
         data['updated'] = modded;
-        this.log('*************************');
-        this.log(`Adding ${modded} to data`);
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
         // TODO: in theory regular Events might have subEvent or superEvent
