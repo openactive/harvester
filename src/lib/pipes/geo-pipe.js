@@ -13,7 +13,7 @@ class GeoPipe extends Pipe {
 
         let loc = this.normalisedEvents[idx].body['location'] ? this.normalisedEvents[idx].body['location'] : this.normalisedEvents[idx].body['beta:affiliatedLocation'];
 
-        if ('postcode' in loc) {
+        if (loc && 'postcode' in loc) {
 
           const postCode = loc['postcode'];
 
