@@ -7,12 +7,12 @@ import fetch from 'node-fetch';
 The NormaliseEvent Pipe turns OpenActive Event objects into a
 normalised form.
 **/
-class NormaliseEventPipe extends Pipe {
+class NormaliseOnDemandEventPipe extends Pipe {
   run(){
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      if (data.type == 'Event'){
+      if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
 
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
@@ -60,7 +60,7 @@ class NormaliseEventPipe extends Pipe {
       // TODO: TH - this code is replicated across EventSeries, SessionSeries, and HeadlineEvent
       // classes. Refactor to avoid repetition.
       let activities = this.parseActivity(eventData.activity);
-      let location = this.parseLocation(eventData.location);
+      let location = this.parseLocation(eventData["beta:affiliatedLocation"]]);
       // TODO fixme
       let organizer = eventData.organizer;
       if (organizer === undefined){
