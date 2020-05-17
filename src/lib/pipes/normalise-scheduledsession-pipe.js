@@ -15,7 +15,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let data = this.rawData.data
 
       // The top level event is a ScheduledSession
-      if (data.type == 'ScheduledSession'){
+      if (data.type == 'ScheduledSession' || data['@type'] == 'ScheduledSession'){
 
         // See if it is part of a SessionSeries
         let sessionSeries = undefined;
@@ -112,6 +112,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let activities = this.parseActivity(superEventData.activity);
     let organizer = this.parseOrganization(superEventData.organizer);
     let event_attendance_mode = superEventData.eventAttendanceMode ? superEventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+    let data_type = superEventData.type ? superEventData.type : superEventData['@type'];
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,

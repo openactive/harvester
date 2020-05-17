@@ -12,7 +12,7 @@ class NormaliseEventPipe extends Pipe {
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      if (data.type == 'Event'){
+      if (data.type == 'Event' || data['@type'] == 'Event'){
 
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
@@ -29,7 +29,7 @@ class NormaliseEventPipe extends Pipe {
 
         const pipe = this;
         subEvents.forEach(function(subEventData){
-          if(subEventData.type == 'Event'){
+          if(subEventData.type == 'Event'|| subEventData['@type'] == 'Event'){
 
             // Get data from parent
             let parentEvent = pipe.parseEvent(data);
@@ -69,7 +69,7 @@ class NormaliseEventPipe extends Pipe {
         organizer = organizer.name;
       }
       let event_attendance_mode = eventData.eventAttendanceMode ? eventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
-
+      let data_type = eventData.type ? eventData.type : eventData['@type'];
       let normalisedEvent = new NormalisedEvent({
         "data_id": eventData.id,
         "name": eventData.name,
@@ -83,7 +83,7 @@ class NormaliseEventPipe extends Pipe {
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
         "organizer_label": organizer,
-        "derived_from_type": eventData.type,
+        "derived_from_type": data_type,
         "derived_from_id": this.rawData.id,
       }, eventData);
 

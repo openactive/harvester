@@ -16,12 +16,12 @@ class NormaliseEventSeriesPipe extends Pipe {
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      if (data.type == 'Event'){
+      if (data.type == 'Event' || data['@type'] == 'Event'){
 
         let activities = this.parse_activity(data.activity);
         let location = this.parse_location(data.location);
         let event_attendance_mode = data.eventAttendanceMode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
-
+        let data_type = eventData.type ? eventData.type : eventData['@type'];
         let normalisedEvent = new NormalisedEvent({
           "name": data.name,
           "name_label": data.name,
@@ -34,7 +34,7 @@ class NormaliseEventSeriesPipe extends Pipe {
           "end_date": data.endDate,
           "organizer": data.organizer.name,
           "organizer_label": data.organizer.name,
-          "derived_from_type": data.type,
+          "derived_from_type": data_type,
           "derived_from_id": this.rawData.id,
         }, data);
 
