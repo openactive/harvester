@@ -109,7 +109,7 @@ class NormaliseEventPipe extends Pipe {
   (if they don't already exist).
   **/
   propertiesToCopy(){
-    return ['name', 'name_label','event_status', 'description', 'location', 'organizer', 'organizer_label', 'event_attendance_mode'];
+    return ['name', 'event_status', 'description', 'location', 'organizer', 'event_attendance_mode'];
   }
 
 }

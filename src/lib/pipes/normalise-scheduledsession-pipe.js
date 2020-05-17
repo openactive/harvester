@@ -72,7 +72,6 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let normalisedEvent = new NormalisedEvent({
       "data_id": data.id,
       "name": data.name,
-      "name_label" : data.name,
       "description": data.description,
       "event_status": data.eventStatus,
       "event_attendance_mode": event_attendance_mode,
@@ -81,7 +80,6 @@ class NormaliseScheduledSessionPipe extends Pipe {
       "start_date": data.startDate,
       "end_date": data.endDate,
       "organizer": organizer,
-      "organizer_label": organizer,
       "derived_from_type": data.type,
       "derived_from_id": this.rawData.id,
     }, data);
@@ -116,7 +114,6 @@ class NormaliseScheduledSessionPipe extends Pipe {
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,
-      "name_label": superEventData.name,
       "data_id": superEventData.id,
       "description": superEventData.description,
       "location": location,
@@ -156,7 +153,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
   (if they don't already exist).
   **/
   propertiesToCopy(){
-    return ['name', 'name_label', 'event_status', 'description', 'location', 'organizer', 'organizer_label', 'event_attendance_mode'];
+    return ['name', 'event_status', 'description', 'location', 'organizer', 'event_attendance_mode'];
   }
 
 
