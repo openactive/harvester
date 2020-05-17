@@ -286,20 +286,11 @@ class ActivityStore {
                 "data_id": {
                   "type": "keyword"
                 },
-                "name": {
-                  "type": "text"
-                },
-                "name_label" : {
-                  "type" : "keyword"
-                },
                 "description": {
                   "type": "text"
                 },
                 "event_status": {
                   "type": "keyword"
-                },
-                "event_attendance_mode": {
-                  "type" : "keyword"
                 },
                 "location": {
                   "properties": {
@@ -319,12 +310,6 @@ class ActivityStore {
                       "type": "keyword"
                     }
                   }
-                },
-                "organizer": {
-                  "type": "text"
-                },
-                "organizer_label" : {
-                  "type" : "keyword"
                 },
                 "start_date": {
                   "type": "date"

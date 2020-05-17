@@ -122,7 +122,6 @@ class NormaliseScheduledSessionPipe extends Pipe {
       "location": location,
       "activity": activities,
       "organizer": organizer,
-      "organizer_label": organizer,
       "derived_from_type": superEventData.type,
       "derived_from_id": local_id,
       "event_attendance_mode" : event_attendance_mode

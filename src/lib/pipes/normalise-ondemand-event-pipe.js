@@ -78,7 +78,6 @@ class NormaliseOnDemandEventPipe extends Pipe {
       let normalisedEvent = new NormalisedEvent({
         "data_id": eventData.id,
         "name": eventData.name,
-        "name_label": eventData.name,
         "description": eventData.description,
         "event_status": eventData.eventStatus,
         "location": location,
@@ -87,7 +86,6 @@ class NormaliseOnDemandEventPipe extends Pipe {
         "end_date": eventData.endDate,
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
-        "organizer_label": organizer,
         "derived_from_type": "OnDemandEvent",
         "derived_from_id": this.rawData.id,
         "updated" : eventData.updated

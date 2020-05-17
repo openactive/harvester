@@ -24,7 +24,6 @@ class NormaliseEventSeriesPipe extends Pipe {
         let data_type = eventData.type ? eventData.type : eventData['@type'];
         let normalisedEvent = new NormalisedEvent({
           "name": data.name,
-          "name_label": data.name,
           "description": data.description,
           "event_status": data.eventStatus,
           "location": location,
@@ -33,7 +32,6 @@ class NormaliseEventSeriesPipe extends Pipe {
           "event_attendance_mode": event_attendance_mode,
           "end_date": data.endDate,
           "organizer": data.organizer.name,
-          "organizer_label": data.organizer.name,
           "derived_from_type": data_type,
           "derived_from_id": this.rawData.id,
         }, data);
