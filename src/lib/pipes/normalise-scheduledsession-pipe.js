@@ -16,11 +16,12 @@ class NormaliseScheduledSessionPipe extends Pipe {
 
       // The top level event is a ScheduledSession
       if (data.type == 'ScheduledSession' || data['@type'] == 'ScheduledSession'){
-
+        this.log(`Processing ${this.rawData.id}`);
         // See if it is part of a SessionSeries
         let sessionSeries = undefined;
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
+          this.log(`Awaiting superevent`);
           sessionSeries = await this.getSuperEvent(data);
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
@@ -33,7 +34,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       // Or the top level event is anything (but probably a SessionSeries)
       // with ScheduledSession subEvents
       }else if (data.subEvent !== undefined){
-
+        this.log(`Processing ${this.rawData.id} at lower level`);
         let sessionSeries = this.parseSessionSeries(this.rawData.id, data);
         let subEvents = [];
         if (!Array.isArray(data.subEvent)){
