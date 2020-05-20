@@ -4,7 +4,7 @@ import ActivityStore from '../activity-store.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
-/** 
+/**
 The NormaliseSlot Pipe turns OpenActive Slot objects into a
 normalised form.
 
@@ -35,7 +35,7 @@ class NormaliseSlotPipe extends Pipe {
 
       // A FacilityUse at the top level
       // We can look inside it for Slots
-      // TODO: FU may contain multiple IFU or IFU may point to a single FU; 
+      // TODO: FU may contain multiple IFU or IFU may point to a single FU;
       //       IFU --aggregateFacilityUse--> FU
       //       FU --individualFacilityUse--> [IFU]
       //       not sure if we need to also fetch these for additional data
@@ -67,7 +67,8 @@ class NormaliseSlotPipe extends Pipe {
         }
 
       }else{
-        this.log(`Pass: ${this.rawData.data['type']}`);
+        let entity_type = this.rawData.data['type'] ? this.rawData.data['type'] : this.rawData.data['@type'];
+        this.log(`Pass: ${entity_type}`);
       }
 
       resolve(this.normalisedEvents);
@@ -147,7 +148,7 @@ class NormaliseSlotPipe extends Pipe {
       const results = await activityStore.getRawByKeyword("data_id", facilityUseId);
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
-        
+
         let facilityUseData = data['_source']['data'];
         let facilityUse = this.parseFacilityUse(data['_id'], facilityUseData);
         // Assume there's one and return the first hit

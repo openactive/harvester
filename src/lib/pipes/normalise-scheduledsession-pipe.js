@@ -50,7 +50,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
         }
 
       }else{
-        this.log(`Pass: ${this.rawData.data['type']}`);
+        let entity_type = this.rawData.data['type'] ? this.rawData.data['type'] : this.rawData.data['@type'];
+        this.log(`Pass: ${entity_type}`);
       }
 
       resolve(this.normalisedEvents);
