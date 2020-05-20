@@ -17,7 +17,7 @@ class Pipe {
 
   isBookable(eventType){
     /* 'bookable' events need to be created as NormalisedEvents in their own right. */
-    return ['Event', 'HeadlineEvent', 'CourseInstance', 'Slot'].includes(eventType);
+    return ['Event', 'HeadlineEvent', 'CourseInstance', 'Slot', 'ScheduledSession'].includes(eventType);
   }
 
   parseActivity(activity){
@@ -26,7 +26,7 @@ class Pipe {
     objects, and gets the URI of each activity, passing back an array of strings.
     These are further processed by the ActivityPipe.
     **/
-    
+
     let rawActivities = [];
     let activities = [];
     if (!Array.isArray(activity)){
@@ -62,7 +62,7 @@ class Pipe {
 
   parseLocation(location){
     /**
-    This passes the whole location object through for further processing 
+    This passes the whole location object through for further processing
     by the geo augmentation pipe.
     **/
     if (location !== undefined){
@@ -89,7 +89,7 @@ class Pipe {
 
   parseOrganization(organization){
     /**
-    This passes the whole organization object through for further processing 
+    This passes the whole organization object through for further processing
     by the organization augmentation pipe.
     **/
     if (organization !== undefined){
