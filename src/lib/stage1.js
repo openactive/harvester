@@ -70,10 +70,10 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
           /* OpenActive RPDE Page callback */
           for (const activityItem of activityItems) {
               if (activityItem.state == 'updated'){
-                log('Processing item ${activityItem.id}');
+                log(`Processing item ${activityItem.id}`);
                 await activityStore.update(new RPDEItemUpdate(activityItem, publisherKey, feedKey));
               } else if (activityItem.state == 'deleted') {
-                log('Deleting item ${activityItem.id}');
+                log(`Deleting item ${activityItem.id}`);
                 await activityStore.delete(new RPDEItemDelete(activityItem, publisherKey, feedKey));
               } else {
                 log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
