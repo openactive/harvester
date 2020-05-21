@@ -22,7 +22,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
           this.log(`Awaiting superevent ${data.superEvent}`);
-          sessionSeries = await this.getSuperEvent(data).catch((err =>){
+          sessionSeries = await this.getSuperEvent(data).catch((err) =>{
             this.log(`Could not find superevent ${data.superEvent}`);
           });
         }else if (data.superEvent !== undefined){
