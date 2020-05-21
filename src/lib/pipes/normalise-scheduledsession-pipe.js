@@ -135,12 +135,12 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let superEventId = rawData.superEvent;
 
       const results = await activityStore.getRawByKeyword("data_id", superEventId);
-      if(!results.length){
-        resolve({});
-      }
+//      if(!results.length){
+//        resolve({});
+//      }
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
-        this.log(`Found superevent ${x}`);
+        this.log(`Found superevent ${superEventId}`);
         let superEventData = data['_source']['data'];
         let superEvent = this.parseSessionSeries(data['_id'], superEventData);
         // Assume there's one and return the first hit
