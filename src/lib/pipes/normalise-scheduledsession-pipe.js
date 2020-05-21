@@ -22,7 +22,9 @@ class NormaliseScheduledSessionPipe extends Pipe {
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
           this.log(`Awaiting superevent ${data.superEvent}`);
-          sessionSeries = await this.getSuperEvent(data);
+          sessionSeries = await this.getSuperEvent(data).catch((err =>){
+            this.log(`Could not find superevent ${data.superEvent}`);
+          });
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
@@ -139,7 +141,9 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let superEventId = rawData.superEvent;
 
       const results = await activityStore.getRawByKeyword("data_id", superEventId);
-      this.log(`${results.length} results for superevent search`);
+      if(!results.length){
+        throw "Not Found";
+      }
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
         this.log(`Found superevent ${x}`);
