@@ -17,12 +17,10 @@ class NormaliseScheduledSessionPipe extends Pipe {
 
       // The top level event is a ScheduledSession
       if (data.type == 'ScheduledSession' || data['@type'] == 'ScheduledSession'){
-        this.log(`Processing ${this.rawData.id}`);
         // See if it is part of a SessionSeries
         let sessionSeries = undefined;
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
-          this.log(`Awaiting superevent ${data.superEvent}`);
           // sessionSeries = await this.getSuperEvent(data);
           let firstAttempt = this.getSuperEvent(data).catch((err) => { console.log(`Failing on entity (round 1) ${data.superEvent}`)});
           let timeoutPromise = Utils.getTimeoutPromise(data.superEvent); // returns a Promise
@@ -30,7 +28,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
-        }   
+        }
 
       let normalisedEvent = this.parseScheduledSession(data, sessionSeries);
       this.normalisedEvents.push(normalisedEvent);
@@ -38,7 +36,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       // Or the top level event is anything (but probably a SessionSeries)
       // with ScheduledSession subEvents
       }else if (data.subEvent !== undefined){
-        this.log(`Processing ${this.rawData.id} at lower level`);
+
         let sessionSeries = this.parseSessionSeries(this.rawData.id, data);
         let subEvents = [];
         if (!Array.isArray(data.subEvent)){
@@ -149,7 +147,6 @@ class NormaliseScheduledSessionPipe extends Pipe {
       }
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
-        this.log(`Found superevent ${superEventId}`);
         let superEventData = data['_source']['data'];
         let superEvent = this.parseSessionSeries(data['_id'], superEventData);
         // Assume there's one and return the first hit

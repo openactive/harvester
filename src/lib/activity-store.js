@@ -117,7 +117,7 @@ class ActivityStore {
   }
 
 
-  /** Updates/Creates an normalised event. Used in stage 2. **/
+  /** Updates/Creates a normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
     log(`${Settings.elasticIndexNormalised} Adding/Updating ${normalisedEvent.id()}`);
     try {

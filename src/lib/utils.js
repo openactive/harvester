@@ -70,7 +70,6 @@ class Utils {
         let timeout = 1000;
         let wait = setTimeout(() => {
 
-          console.log(`Processing entity ${loginfo}`);
           reject("Operation timed out")},
           timeout);
 

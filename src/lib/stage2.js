@@ -68,15 +68,13 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
     log(`Listing raw data publisher ${publisherKey} start ${start} - updatedLastSeen ${updatedLastSeenAtStartOfLoop}`);
     const results = await activityStore.get(publisherKey, start, count, updatedLastSeenAtStartOfLoop);
-    log(`Have found ${results['body']['hits']['hits'].length}`)
     for (const x in results['body']['hits']['hits']) {
 
-      log(`Iteration ${x}`);
       const data = results['body']['hits']['hits'][x];
 
       const rawData = new RawData(data);
       updatedLastSeen = rawData.meta.updated;
-      
+
       if (!data['_source']['deleted']) {
 
         const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
