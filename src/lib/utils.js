@@ -63,12 +63,16 @@ class Utils {
 
   }
 
-  static getTimeoutPromise(){
+  static getTimeoutPromise(loginfo){
 
       return new Promise((resolve, reject) => {
 
         let timeout = 1;
-        let wait = setTimeout(() => { resolve("Operation timed out")}, timeout);
+        let wait = setTimeout(() => {
+
+          console.log(`Processing entity ${loginfo}`);
+          reject("Operation timed out")},
+          timeout);
 
       });
 
