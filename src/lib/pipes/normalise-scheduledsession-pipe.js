@@ -1,5 +1,6 @@
 import Pipe from './pipe.js';
 import { cache } from '../utils.js';
+import { Util } from '../utils.js';
 import ActivityStore from '../activity-store.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
@@ -22,7 +23,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
           this.log(`Awaiting superevent ${data.superEvent}`);
-          sessionSeries = await this.getSuperEvent(data);
+          // sessionSeries = await this.getSuperEvent(data);
+          Promise.race([Utils.getTimeoutPromise, this.getSuperEvent(data)]);
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);

@@ -63,6 +63,17 @@ class Utils {
 
   }
 
+  static getTimeoutPromise(){
+
+      return new Promise((resolve, reject) => {
+
+        let timeout = 1;
+        let wait = setTimeout(() => { resolve "Operation timed out"}, timeout);
+        
+      });
+
+  }
+
 }
 
 var cache = { postcodes: {}, activities: {} };
