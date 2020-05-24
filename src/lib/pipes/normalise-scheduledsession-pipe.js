@@ -139,7 +139,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let superEventId = rawData.superEvent;
 
       const results = await activityStore.getRawByKeyword("data_id", superEventId);
-      if(!results['body']['hits']['hits'].length){
+      if(!results['body']['hits']['hits']){
+        console.log("No results found for superevent");
         reject("No item matching superevent found");
       }
       for (const x in results['body']['hits']['hits']) {
