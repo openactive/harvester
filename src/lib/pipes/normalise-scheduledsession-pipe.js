@@ -1,6 +1,6 @@
 import Pipe from './pipe.js';
 import { cache } from '../utils.js';
-import { Util } from '../utils.js';
+import { Utils } from '../utils.js';
 import ActivityStore from '../activity-store.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
