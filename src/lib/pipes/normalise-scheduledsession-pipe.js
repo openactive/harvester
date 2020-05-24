@@ -24,7 +24,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
           // SessionSeries is an ID, need to get the object from the raw data
           this.log(`Awaiting superevent ${data.superEvent}`);
           // sessionSeries = await this.getSuperEvent(data);
-          let firstAttempt = this.getSuperEvent(data).catch((err) => { console.log(`Failing on entity ${data.superEvent}`)}); 
+          let firstAttempt = this.getSuperEvent(data).catch((err) => { console.log(`Failing on entity ${data.superEvent}`)});
           let timeoutPromise = Utils.getTimeoutPromise(data.superEvent); // returns a Promise
           sessionSeries = await Promise.race([timeoutPromise, firstAttempt]).catch((err) => { console.log(`Failing on entity ${data.superEvent}`)});
         }else if (data.superEvent !== undefined){
@@ -134,7 +134,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
   the raw data index by data_id and returns it as a NormalisedEvent.
   **/
   getSuperEvent(rawData){
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
       const activityStore = new ActivityStore();
       let superEventId = rawData.superEvent;
 
