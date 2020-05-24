@@ -25,7 +25,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
           this.log(`Awaiting superevent ${data.superEvent}`);
           // sessionSeries = await this.getSuperEvent(data);
           let firstAttempt = this.getSuperEvent(data); // returns a Promise
-          sessionSeries = await Promise.race([Utils.getTimeoutPromise, firstAttempt]);
+          let timeoutPromise = Utils.getTimeoutPromise(); // returns a Promise
+          sessionSeries = await Promise.race([timeoutPromise, firstAttempt]);
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
