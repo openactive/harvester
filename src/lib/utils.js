@@ -67,7 +67,7 @@ class Utils {
 
       return new Promise((resolve, reject) => {
 
-        let timeout = 1;
+        let timeout = 1000;
         let wait = setTimeout(() => {
 
           console.log(`Processing entity ${loginfo}`);
