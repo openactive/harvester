@@ -76,8 +76,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
       const rawData = new RawData(data);
       updatedLastSeen = rawData.meta.updated;
-      let eltype = JSON.stringify(rawData);
-      log(`Contents are: ${eltype}`);
+      
       if (!data['_source']['deleted']) {
 
         const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {

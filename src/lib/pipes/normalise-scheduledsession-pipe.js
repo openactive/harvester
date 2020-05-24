@@ -30,7 +30,11 @@ class NormaliseScheduledSessionPipe extends Pipe {
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
-        }
+        }   
+
+      let normalisedEvent = this.parseScheduledSession(data, sessionSeries);
+      this.normalisedEvents.push(normalisedEvent);
+
       // Or the top level event is anything (but probably a SessionSeries)
       // with ScheduledSession subEvents
       }else if (data.subEvent !== undefined){
