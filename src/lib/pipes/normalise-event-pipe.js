@@ -82,7 +82,7 @@ class NormaliseEventPipe extends Pipe {
         "end_date": eventData.endDate,
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
-        "derived_from_type": data_type,
+        "derived_from_type": "Event",
         "derived_from_id": this.rawData.id,
       }, eventData);
 

@@ -84,7 +84,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       "start_date": data.startDate,
       "end_date": data.endDate,
       "organizer": organizer,
-      "derived_from_type": data.type,
+      "derived_from_type": "ScheduledSession",
       "derived_from_id": this.rawData.id,
     }, data);
 
