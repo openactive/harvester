@@ -10283,8 +10283,8 @@
             "publisher-url": "https://playwaze.com",
             "data-url": "https://playwaze.com/OpenData/Events",
             "data-urls": {
-              "session-series": "https://playwaze.com/OpenData/SessionSeries",
-              "schedules-sessions":"https://playwaze.com/OpenData/ScheduledSessions"         },
+              "event": "https://playwaze.com/OpenData/Events"
+            },
             "documentation-url": "https://github.com/playwaze/opendata",
             "license-name": "Creative Commons Attribution Licence (CC-BY v4.0)",
             "license-url": "https://creativecommons.org/licenses/by/4.0/",
