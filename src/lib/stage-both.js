@@ -24,11 +24,11 @@ async function processBothStages() {
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
-    /*let includePublishers = ['opensessions/opendata'];
+    let includePublishers = ['opensessions/opendata'];
     if (!includePublishers.includes(publisherKey)){
       console.log(`[Dev] Skipping ${publisherKey}`);
       continue;
-    }*/
+    }
 
     const publisher = registryJson.data[publisherKey];
 
