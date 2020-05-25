@@ -117,7 +117,7 @@ class ActivityStore {
   }
 
 
-  /** Updates/Creates an normalised event. Used in stage 2. **/
+  /** Updates/Creates a normalised event. Used in stage 2. **/
   async updateNormalised(normalisedEvent) {
     log(`${Settings.elasticIndexNormalised} Adding/Updating ${normalisedEvent.id()}`);
     try {
@@ -268,8 +268,8 @@ class ActivityStore {
         if (esHarvesterStateIndexCreateQ.error) {
           resolve(esHarvesterStateIndexCreateQ.error);
         }
-      }  
-      
+      }
+
       // Normalised Index
       const esNormalisedIndexExistsQ = await this.client.indices.exists({
         index: Settings.elasticIndexNormalised,
@@ -279,15 +279,12 @@ class ActivityStore {
         log(`Creating index ${Settings.elasticIndexNormalised}`);
         const esNormalisedIndexCreateQ = await this.client.indices.create({
           index: Settings.elasticIndexNormalised,
-           body: { 
-            "settings": {}, 
+           body: {
+            "settings": {},
             "mappings": {
               "properties": {
                 "data_id": {
                   "type": "keyword"
-                },
-                "name": {
-                  "type": "text"
                 },
                 "description": {
                   "type": "text"
@@ -314,14 +311,14 @@ class ActivityStore {
                     }
                   }
                 },
-                "organizer": {
-                  "type": "text"
-                },
                 "start_date": {
                   "type": "date"
                 },
                 "end_date": {
                   "type": "date"
+                },
+                "updated" : {
+                  "type" : "date"
                 },
                 "activity": {
                   "type": "keyword"
@@ -339,8 +336,8 @@ class ActivityStore {
                   "type": "keyword"
                 },
               }
-            } 
-          } 
+            }
+          }
         });
 
         if (esNormalisedIndexCreateQ.error) {

@@ -7,13 +7,18 @@ import fetch from 'node-fetch';
 The NormaliseEvent Pipe turns OpenActive Event objects into a
 normalised form.
 **/
-class NormaliseEventPipe extends Pipe {
+class NormaliseOnDemandEventPipe extends Pipe {
   run(){
     return new Promise(async resolve => {
 
       let data = this.rawData.data
-      if (data.type == 'Event' || data['@type'] == 'Event'){
 
+      if (data.type == 'OnDemandEvent' || data['@type'] == 'OnDemandEvent'){
+
+        // TODO: for some reason start dates aren't being given on this event type
+        // Sense-check this. For the moment using 'updated' as a proxy.
+        let modded = this.rawData['meta']['updated'];
+        data['updated'] = modded;
         let normalisedEvent = this.parseEvent(data);
         this.normalisedEvents.push(normalisedEvent);
         // TODO: in theory regular Events might have subEvent or superEvent
@@ -29,7 +34,7 @@ class NormaliseEventPipe extends Pipe {
 
         const pipe = this;
         subEvents.forEach(function(subEventData){
-          if(subEventData.type == 'Event'|| subEventData['@type'] == 'Event'){
+          if(subEventData.type == 'Event'){
 
             // Get data from parent
             let parentEvent = pipe.parseEvent(data);
@@ -61,7 +66,7 @@ class NormaliseEventPipe extends Pipe {
       // TODO: TH - this code is replicated across EventSeries, SessionSeries, and HeadlineEvent
       // classes. Refactor to avoid repetition.
       let activities = this.parseActivity(eventData.activity);
-      let location = this.parseLocation(eventData.location);
+      let location = this.parseLocation(eventData["beta:affiliatedLocation"]);
       // TODO fixme
       let organizer = eventData.organizer;
       if (organizer === undefined){
@@ -70,7 +75,7 @@ class NormaliseEventPipe extends Pipe {
         organizer = organizer.name;
       }
       let event_attendance_mode = eventData.eventAttendanceMode ? eventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
-      let data_type = eventData.type ? eventData.type : eventData['@type'];
+
       let normalisedEvent = new NormalisedEvent({
         "data_id": eventData.id,
         "name": eventData.name,
@@ -78,12 +83,13 @@ class NormaliseEventPipe extends Pipe {
         "event_status": eventData.eventStatus,
         "location": location,
         "activity": activities,
-        "start_date": eventData.startDate,
+        "start_date": eventData.startDate ? eventData.startDate : eventData.updated,
         "end_date": eventData.endDate,
         "event_attendance_mode": event_attendance_mode,
         "organizer": organizer,
-        "derived_from_type": "Event",
+        "derived_from_type": "OnDemandEvent",
         "derived_from_id": this.rawData.id,
+        "updated" : eventData.updated
       }, eventData);
 
       if (parentEvent !== undefined){
@@ -115,4 +121,4 @@ class NormaliseEventPipe extends Pipe {
 
 }
 
-export default NormaliseEventPipe;
+export default NormaliseOnDemandEventPipe;

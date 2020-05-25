@@ -10276,14 +10276,14 @@
             "boundaries": []
         },
         "playwaze/opendata": {
-            "dataset-site-url": "http://data.playwaze.com/",
+            "dataset-site-url": "https://playwaze.com/OpenData/OpenActive",
             "title": "Playwaze Courses & Sessions",
             "description": "Courses and sessions from the Playwaze app",
             "publisher-name": "Playwaze Ltd",
             "publisher-url": "https://playwaze.com",
-            "data-url": "https://playwaze.com/Webservices/Playwazeservice.svc/Groupplay/GetOpenActiveData",
+            "data-url": "https://playwaze.com/OpenData/Events",
             "data-urls": {
-              "all":"https://playwaze.com/Webservices/Playwazeservice.svc/Groupplay/GetOpenActiveData"
+              "event": "https://playwaze.com/OpenData/Events"
             },
             "documentation-url": "https://github.com/playwaze/opendata",
             "license-name": "Creative Commons Attribution Licence (CC-BY v4.0)",

@@ -1,10 +1,11 @@
 import Pipe from './pipe.js';
 import { cache } from '../utils.js';
+import { Utils } from '../utils.js';
 import ActivityStore from '../activity-store.js';
 import NormalisedEvent from '../normalised-event.js';
 import fetch from 'node-fetch';
 
-/** 
+/**
 The NormaliseScheduledSession Pipe turns OpenActive ScheduledSession objects into a
 normalised form. It also operates over SessionSeries data to augment the
 ScheduledSessions, but no NormalisedEvents are created from a SessionSeries alone.
@@ -15,20 +16,22 @@ class NormaliseScheduledSessionPipe extends Pipe {
       let data = this.rawData.data
 
       // The top level event is a ScheduledSession
-      if (data.type == 'ScheduledSession'){
-
+      if (data.type == 'ScheduledSession' || data['@type'] == 'ScheduledSession'){
         // See if it is part of a SessionSeries
         let sessionSeries = undefined;
         if (data.superEvent !== undefined && typeof(data.superEvent) === 'string'){
           // SessionSeries is an ID, need to get the object from the raw data
-          sessionSeries = await this.getSuperEvent(data);
+          // sessionSeries = await this.getSuperEvent(data);
+          let firstAttempt = this.getSuperEvent(data).catch((err) => { console.log(`Failing on entity (round 1) ${data.superEvent}`)});
+          let timeoutPromise = Utils.getTimeoutPromise(data.superEvent); // returns a Promise
+          sessionSeries = await Promise.race([timeoutPromise, firstAttempt]).catch((err) => { console.log(`Failing on entity (round 2) ${data.superEvent}`)});
         }else if (data.superEvent !== undefined){
           // SessionSeries is embedded
           sessionSeries = this.parseSessionSeries(this.rawData.id, data.superEvent);
         }
 
-        let normalisedEvent = this.parseScheduledSession(data, sessionSeries);
-        this.normalisedEvents.push(normalisedEvent);
+      let normalisedEvent = this.parseScheduledSession(data, sessionSeries);
+      this.normalisedEvents.push(normalisedEvent);
 
       // Or the top level event is anything (but probably a SessionSeries)
       // with ScheduledSession subEvents
@@ -50,12 +53,13 @@ class NormaliseScheduledSessionPipe extends Pipe {
         }
 
       }else{
-        this.log(`Pass: ${this.rawData.data['type']}`);
+        let entity_type = this.rawData.data['type'] ? this.rawData.data['type'] : this.rawData.data['@type'];
+        this.log(`Pass: ${entity_type}`);
       }
 
       resolve(this.normalisedEvents);
     });
-      
+
   }
 
   /**
@@ -67,18 +71,20 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let activities = this.parseActivity(data.activity);
     let location = this.parseLocation(data.location);
     let organizer = this.parseOrganization(data.organizer);
+    let event_attendance_mode = data.eventAttendanceMode ? data.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
 
     let normalisedEvent = new NormalisedEvent({
       "data_id": data.id,
       "name": data.name,
       "description": data.description,
       "event_status": data.eventStatus,
+      "event_attendance_mode": event_attendance_mode,
       "location": location,
       "activity": activities,
       "start_date": data.startDate,
       "end_date": data.endDate,
       "organizer": organizer,
-      "derived_from_type": data.type,
+      "derived_from_type": "ScheduledSession",
       "derived_from_id": this.rawData.id,
     }, data);
 
@@ -107,6 +113,8 @@ class NormaliseScheduledSessionPipe extends Pipe {
     let location = this.parseLocation(superEventData.location);
     let activities = this.parseActivity(superEventData.activity);
     let organizer = this.parseOrganization(superEventData.organizer);
+    let event_attendance_mode = superEventData.eventAttendanceMode ? superEventData.eventAttendanceMode : "https://schema.org/OfflineEventAttendanceMode";
+    let data_type = superEventData.type ? superEventData.type : superEventData['@type'];
 
     let superEvent = new NormalisedEvent({
       "name": superEventData.name,
@@ -117,6 +125,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
       "organizer": organizer,
       "derived_from_type": superEventData.type,
       "derived_from_id": local_id,
+      "event_attendance_mode" : event_attendance_mode
     }, superEventData);
 
     return superEvent;
@@ -127,14 +136,17 @@ class NormaliseScheduledSessionPipe extends Pipe {
   the raw data index by data_id and returns it as a NormalisedEvent.
   **/
   getSuperEvent(rawData){
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
       const activityStore = new ActivityStore();
       let superEventId = rawData.superEvent;
 
       const results = await activityStore.getRawByKeyword("data_id", superEventId);
+      if(!results['body']['hits']['hits']){
+        console.log("No results found for superevent");
+        reject("No item matching superevent found");
+      }
       for (const x in results['body']['hits']['hits']) {
         const data = results['body']['hits']['hits'][x];
-        
         let superEventData = data['_source']['data'];
         let superEvent = this.parseSessionSeries(data['_id'], superEventData);
         // Assume there's one and return the first hit
@@ -148,7 +160,7 @@ class NormaliseScheduledSessionPipe extends Pipe {
   (if they don't already exist).
   **/
   propertiesToCopy(){
-    return ['name', 'event_status', 'description', 'location', 'organizer'];
+    return ['name', 'event_status', 'description', 'location', 'organizer', 'event_attendance_mode'];
   }
 
 

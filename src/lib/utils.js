@@ -63,6 +63,20 @@ class Utils {
 
   }
 
+  static getTimeoutPromise(loginfo){
+
+      return new Promise((resolve, reject) => {
+
+        let timeout = 1000;
+        let wait = setTimeout(() => {
+
+          reject("Operation timed out")},
+          timeout);
+
+      });
+
+  }
+
 }
 
 var cache = { postcodes: {}, activities: {} };

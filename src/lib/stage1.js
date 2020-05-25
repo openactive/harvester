@@ -23,7 +23,7 @@ async function processStage1() {
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
-    /*let includePublishers = ['britishtriathlon/openactive'];
+   /*let includePublishers = ['opensessions/opendata'];
     if (!includePublishers.includes(publisherKey)){
       console.log(`[Dev] Skipping ${publisherKey}`);
       continue;
@@ -36,7 +36,7 @@ async function processStage1() {
       continue;
     }
 
-    // Not await - we want the event loop of Node to run all publishers at once 
+    // Not await - we want the event loop of Node to run all publishers at once
     processStage1ForPublisher(publisherKey, publisher, activityStore);
 
   }
@@ -72,9 +72,10 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
               if (activityItem.state == 'updated'){
                 await activityStore.update(new RPDEItemUpdate(activityItem, publisherKey, feedKey));
               } else if (activityItem.state == 'deleted') {
+                log(`Deleting item ${activityItem.id}`);
                 await activityStore.delete(new RPDEItemDelete(activityItem, publisherKey, feedKey));
               } else {
-                log(`Skipping unknown activity state: ${activityItem.state}`);
+                log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
               }
           }
 

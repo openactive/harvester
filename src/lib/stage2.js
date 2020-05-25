@@ -68,8 +68,8 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
     log(`Listing raw data publisher ${publisherKey} start ${start} - updatedLastSeen ${updatedLastSeenAtStartOfLoop}`);
     const results = await activityStore.get(publisherKey, start, count, updatedLastSeenAtStartOfLoop);
-
     for (const x in results['body']['hits']['hits']) {
+
       const data = results['body']['hits']['hits'][x];
 
       const rawData = new RawData(data);
