@@ -8,7 +8,7 @@ import Utils from './utils.js';
 
 async function processBothStages() {
 
-//  const activityStore = new ActivityStore();
+  const activityStore = new ActivityStore();
 //  const activityStoreOK = await activityStore.setupIndex();
 
 //  if (activityStoreOK !== true){
