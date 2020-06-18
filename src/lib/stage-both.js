@@ -8,13 +8,13 @@ import Utils from './utils.js';
 
 async function processBothStages() {
 
-  const activityStore = new ActivityStore();
-  const activityStoreOK = await activityStore.setupIndex();
+//  const activityStore = new ActivityStore();
+//  const activityStoreOK = await activityStore.setupIndex();
 
-  if (activityStoreOK !== true){
-    log("failed to setup elastic index");
-    process.exit(1);
-  }
+//  if (activityStoreOK !== true){
+//    log("failed to setup elastic index");
+//    process.exit(1);
+//  }
 
   await Utils.loadActivitiesJSONIntoCache();
 
@@ -24,12 +24,12 @@ async function processBothStages() {
   for (const publisherKey in registryJson.data) {
 
     /* Dev - uncomment to get data from certain publishers only */
-  /*  let includePublishers = ['opensessions/opendata'];
+  let includePublishers = ['playwaze/opendata'];
     if (!includePublishers.includes(publisherKey)){
       console.log(`[Dev] Skipping ${publisherKey}`);
       continue;
     }
-*/
+
     const publisher = registryJson.data[publisherKey];
 
     /* Skip publishers which aren't available or don't use the paging spec */
