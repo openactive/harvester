@@ -12310,7 +12310,7 @@
             "uses-paging-spec": true,
             "available": true
         },
-        "parkwoord/opendata": {
+        "parkwood/opendata": {
             "dataset-site-url": "https://leisurecentre-openactive.legendonlineservices.co.uk/openactive",
             "data-urls": {
               "session-series":"https://leisurecentre-openactive.legendonlineservices.co.uk/api/sessions",
