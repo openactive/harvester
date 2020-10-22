@@ -17,6 +17,7 @@ class ActivityPipe extends Pipe {
         
         // Enhance from what was in the activity field of the raw data
         eventActivities.forEach(function(activity){
+          console.log(activity);
           let activityId = pipe.normaliseActivityId(activity);
 
           if (cache.activities[activityId] !== undefined){
@@ -53,6 +54,7 @@ class ActivityPipe extends Pipe {
   altLabel so we should get this too. 
   **/
   getActivityLabels(activityKey){
+    console.log("Called on " + activityKey);
     let labels = [];
       // Get the labels from the cached cache.activities
       labels.push(cache.activities[activityKey]['prefLabel']);

@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "licence": "https://creativecommons.org/licenses/by/4.0/",
+        "last-updated": "2020-02-27 16:07:48 +0000",
+        "attribution-text": "Contains National Statistics data © Crown copyright and database right 2017",
+        "attribution-url": "http://geoportal.statistics.gov.uk/datasets/local-authority-districts-december-2016-generalised-clipped-boundaries-in-the-uk/"
+    },
+    "data": {
+        "parkwood/opendata": {
+            "dataset-site-url": "https://leisurecentre-openactive.legendonlineservices.co.uk/openactive",
+            "data-urls": {
+                "session-series": "https://leisurecentre-openactive.legendonlineservices.co.uk/api/sessions",
+                "facility-uses": "https://leisurecentre-openactive.legendonlineservices.co.uk/api/facility-uses",
+                "slots": "https://leisurecentre-openactive.legendonlineservices.co.uk/api/facility-uses/events"
+            },
+            "uses-paging-spec": true,
+            "available": true
+        }
+    }
+
+}

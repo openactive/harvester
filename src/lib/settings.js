@@ -9,7 +9,7 @@ const Settings = {
   "elasticIndexStage2State": process.env.ELASTICSEARCH_INDEX_STAGE_2_STATE || "harvester-stage-2-state",
 
 //  "registryURL": "https://raw.githubusercontent.com/openactive/harvester/virtual-events/datasets.json",
-  "registryURL": "https://raw.githubusercontent.com/openactive/harvester/master/datasets.json",
+  "registryURL": "https://raw.githubusercontent.com/openactive/harvester/master/datasets-test.json",
 
   // For dev, can also do
   //"registryURL": "http://localhost:3001",
