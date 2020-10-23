@@ -63,10 +63,10 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
     for (const feedKey in feeds) {
 
       log(`=== Start ${publisherKey} Feed ${feedKey} ===`);
-
+      let i = 0;
       await (async (publisher) => {
         let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
-
+          if (i < 5){ // limiting for testing purposes
           /* OpenActive RPDE Page callback */
           for (const activityItem of activityItems) {
               if (activityItem.state == 'updated'){
@@ -77,7 +77,12 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
               } else {
                 log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
               }
-          }
+          } /* limiting for testing purposes */
+          else{
+            log("skipping page for testing")
+
+          } // end limit block
+        }
 
         });
 

@@ -54,6 +54,8 @@ class ActivityPipe extends Pipe {
   altLabel so we should get this too. 
   **/
   getActivityLabels(activityKey){
+
+    let pipe = this;
     pipe.log("Called on " + activityKey);
     let labels = [];
       // Get the labels from the cached cache.activities
