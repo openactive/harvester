@@ -77,12 +77,12 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
               } else {
                 log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
               }
-          } /* limiting for testing purposes */
+              i++;
+          }} /* limiting for testing purposes */
           else{
-            log("skipping page for testing")
-
+            log("skipping page for testing");
           } // end limit block
-        }
+        
 
         });
 
