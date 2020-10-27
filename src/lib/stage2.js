@@ -130,7 +130,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
       const data = results['body']['hits']['hits'][x];
 
-      log("data first grab:" + data + "\n");
+      log("data first grab:" + JSON.stringify(data) + "\n");
 
       const rawData = new RawData(data);
 
