@@ -122,7 +122,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
       "working" : "parkwood/opendata-session-series-752049"
   }
 
-  for (let const[stat, val] in Object.entries(test_entities)){
+  for (const[stat, val] in Object.entries(test_entities)){
     log(stat + "\n==================\n");
 
     const results = await activityStore.getRawById(val);
