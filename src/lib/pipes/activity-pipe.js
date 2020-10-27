@@ -17,16 +17,26 @@ class ActivityPipe extends Pipe {
         
         // Enhance from what was in the activity field of the raw data
         eventActivities.forEach(function(activity){
-          pipe.log(activity);
-          let activityId = pipe.normaliseActivityId(activity);
+          let rawActivityId = activity.id;
+          let rawActivityPrefLabel = activity.prefLabel;
 
-          if (cache.activities[activityId] !== undefined){
-            augmentedActivities = augmentedActivities.concat(pipe.getActivityLabels(activityId));
-            // Get labels of broader activities too
-            augmentedActivities = augmentedActivities.concat(pipe.getBroaderActivities(activityId));
-          }else{
-            // It's from a publishers own list, just push as is
-            augmentedActivities.push(activity);
+          if(rawActivityId === undefined && rawActivityPrefLabel !== undefined){
+
+            augmentedActivities.push(rawActivityPrefLabel);
+            pipe.log("Added " + rawActivityPrefLabel + " and skipping further processing!");
+
+          }
+          else{
+            let activityId = pipe.normaliseActivityId(activity);
+
+            if (cache.activities[activityId] !== undefined){
+              augmentedActivities = augmentedActivities.concat(pipe.getActivityLabels(activityId));
+              // Get labels of broader activities too
+              augmentedActivities = augmentedActivities.concat(pipe.getBroaderActivities(activityId));
+            }else{
+              // It's from a publishers own list, just push as is
+              augmentedActivities.push(activity);
+            }
           }
         });
 
