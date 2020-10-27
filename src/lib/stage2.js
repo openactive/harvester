@@ -133,6 +133,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
       log("data first grab:" + JSON.stringify(data) + "\n");
 
       const rawData = new RawData(data);
+          log("Length is " + normalisedEventList.length);
 
       const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
           log("Length is " + normalisedEventList.length);
