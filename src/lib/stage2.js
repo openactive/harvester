@@ -61,7 +61,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
   // HOWEVER
   // Elastic can't go above a certain paging limit
   // So every time we get close to that limit we start again
-  let updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet(publisherKey);
+ /* let updatedLastSeenAtStartOfLoop = await activityStore.stage2StateGet(publisherKey);
   let updatedLastSeen = updatedLastSeenAtStartOfLoop;
 
   while(true) {
@@ -111,6 +111,39 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
     if (start > maxstart) {
       start = 0;
       updatedLastSeenAtStartOfLoop = updatedLastSeen;
+    }
+
+  }
+
+  */
+
+  let test_entities = {
+      "busted" : "parkwood/opendata-session-series-752055",
+      "working" : "parkwood/opendata-session-series-752049"
+  }
+
+  for let(const[stat, val] in Object.entries(test_entities)){
+    log(stat + "\n==================\n");
+
+    const results = await activityStore.getRawById(val);
+    for (const x in results['body']['hits']['hits']) {
+
+      const data = results['body']['hits']['hits'][x];
+
+      log("data first grab:" + data + "\n");
+
+      const rawData = new RawData(data);
+
+      const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
+
+          for (let idx in normalisedEventList) {
+            await activityStore.updateNormalised(normalisedEventList[idx])
+          }
+
+        await pipeLine.run();
+
+      }
+
     }
 
   }

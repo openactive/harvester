@@ -96,7 +96,6 @@ class ActivityStore {
     }
   }
 
-  /** Gets from the raw data with a keyword search **/
   async getRawByKeyword(key, value){
     try {
       return await this.client.search({
@@ -113,6 +112,25 @@ class ActivityStore {
       })
     } catch (e) {
       log(`${Settings.elasticIndexRaw} Error searching by keyword ${e}`);
+    }
+  }  /** Gets from _id values **/
+
+  async getRawById(arbid){
+    try {
+      return await this.client.search({
+        index: Settings.elasticIndexRaw,
+        body: {
+          "query": {
+            "term": {
+              "_id": {
+                "value": arbid
+              }
+            }
+          }
+        }
+      })
+    } catch (e) {
+      log(`${Settings.elasticIndexRaw} Error searching by _id ${e}`);
     }
   }
 
