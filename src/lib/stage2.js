@@ -135,7 +135,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
       const rawData = new RawData(data);
 
       const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
-
+          log("Length is " + normalisedEventList.length);
           for (let idx in normalisedEventList) {
             await activityStore.updateNormalised(normalisedEventList[idx]);
           }
