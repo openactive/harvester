@@ -17,10 +17,10 @@ class ActivityPipe extends Pipe {
         
         // Enhance from what was in the activity field of the raw data
         eventActivities.forEach(function(activity){
-          let rawActivityId = activity.id;
+          let rawActivityId = activity.zid;
           let rawActivityPrefLabel = activity.prefLabel;
 
-          if(rawActivityId === undefined && rawActivityPrefLabel !== undefined){
+          if(rawActivityPrefLabel && !rawActivityId){
 
             augmentedActivities.push(rawActivityPrefLabel);
             pipe.log("Added " + rawActivityPrefLabel + " and skipping further processing!");
