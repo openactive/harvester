@@ -137,18 +137,19 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
       const pipeLine = new PipeLine(rawData, async (normalisedEventList) => {
 
           for (let idx in normalisedEventList) {
-            await activityStore.updateNormalised(normalisedEventList[idx])
+            await activityStore.updateNormalised(normalisedEventList[idx]);
           }
 
         await pipeLine.run();
 
-      }
+      });
 
     }
 
   }
 
 }
+
 
 function log(msg) {
   Utils.log(msg, "harvester-stage2");
