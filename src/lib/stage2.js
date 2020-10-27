@@ -122,8 +122,8 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
       "working" : "parkwood/opendata-session-series-752049"
   }
 
-  for (const[stat, val] in Object.entries(test_entities)){
-    log(stat + "\n==================\n");
+  for (const[stat, val] of Object.entries(test_entities)){
+    log(stat + "  " + val + "\n==================\n");
 
     const results = await activityStore.getRawById(val);
     for (const x in results['body']['hits']['hits']) {
@@ -142,7 +142,7 @@ async function processStage2ForPublisher(publisherKey, publisher, activityStore)
 
         await pipeLine.run();
 
-      });
+      }); 
 
     }
 
