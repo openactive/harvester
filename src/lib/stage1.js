@@ -60,35 +60,35 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
     log(`=== Start ${publisherKey}  ===`);
 
     /* Process each end point! */
-    for (const feedKey in feeds) {
+ //   for (const feedKey in feeds) {
 
-      log(`=== Start ${publisherKey} Feed ${feedKey} ===`);
-      let i = 0;
-      await (async (publisher) => {
-        let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
-          if (i < 0){ // limiting for testing purposes
+ //     log(`=== Start ${publisherKey} Feed ${feedKey} ===`);
+  //    let i = 0;
+   //   await (async (publisher) => {
+    //    let activitiesFeed = new OpenActiveRpde(publisherKey, feedKey, feeds[feedKey], activityStore, async (activityItems) => {
+     //     if (i < 0){ // limiting for testing purposes
           /* OpenActive RPDE Page callback */
-          for (const activityItem of activityItems) {
-              if (activityItem.state == 'updated'){
-                await activityStore.update(new RPDEItemUpdate(activityItem, publisherKey, feedKey));
-              } else if (activityItem.state == 'deleted') {
-                log(`Deleting item ${activityItem.id}`);
-                await activityStore.delete(new RPDEItemDelete(activityItem, publisherKey, feedKey));
-              } else {
-                log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
-              }
-              i++;
-          }} /* limiting for testing purposes */
-          else{
-            log("skipping page for testing");
-          } // end limit block
+       //   for (const activityItem of activityItems) {
+       //       if (activityItem.state == 'updated'){
+       //         await activityStore.update(new RPDEItemUpdate(activityItem, publisherKey, feedKey));
+       //       } else if (activityItem.state == 'deleted') {
+       //         log(`Deleting item ${activityItem.id}`);
+       //         await activityStore.delete(new RPDEItemDelete(activityItem, publisherKey, feedKey));
+       //       } else {
+       //         log(`Skipping unknown activity state: ${activityItem.state}, ${activityItem.id}`);
+       //       }
+       //       i++;
+       //   }} /* limiting for testing purposes */
+       //   else{
+       //     log("skipping page for testing");
+       //   } // end limit block
         
 
-        });
+       // });
 
-        await activitiesFeed.getUpdates();
+       // await activitiesFeed.getUpdates();
 
-      })(publisher);
+      // })(publisher);
 
       log(`=== Finished ${publisherKey} Feed ${feedKey} ===`);
 
