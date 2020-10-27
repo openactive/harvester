@@ -90,9 +90,9 @@ async function processStage1ForPublisher(publisherKey, publisher, activityStore)
 
       // })(publisher);
 
-      log(`=== Finished ${publisherKey} Feed ${feedKey} ===`);
+     // log(`=== Finished ${publisherKey} Feed ${feedKey} ===`);
 
-    }
+    //}
 
     log(`=== Finished ${publisherKey} ===`);
 
