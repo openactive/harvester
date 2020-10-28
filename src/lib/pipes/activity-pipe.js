@@ -14,10 +14,11 @@ class ActivityPipe extends Pipe {
       let pipe = this;
       this.normalisedEvents.forEach(function(event){
         let eventActivities = event.body.activity;
+        pipe.log(JSON.stringify(event.body.activity));
+
 
         // Enhance from what was in the activity field of the raw data
         eventActivities.forEach(function(activity){
-          pipe.log(JSON.stringify(activity));
           let rawActivityId = activity["zid"];
           let rawActivityPrefLabel = activity["prefLabel"];
           pipe.log("raw id is " + rawActivityId + " and rawpreflabel is " + rawActivityPrefLabel);
