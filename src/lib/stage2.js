@@ -20,6 +20,9 @@ async function processStage2() {
   await Utils.loadActivitiesJSONIntoCache();
 
   let res = await fetch(Settings.registryURL);
+  if (!res.ok) {
+    throw res.status + " - " + res.statusText;
+  }
   let registryJson = await res.json();
 
   for (const publisherKey in registryJson.data) {

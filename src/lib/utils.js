@@ -51,7 +51,9 @@ class Utils {
 
 
     const res = await fetch(Settings.activityListJSONLD);
-    // TODO  detect non 200 responses
+    if (!res.ok) {
+      throw res.status + " - " + res.statusText;
+    }
     const activitiesData =  await res.json();
 
 

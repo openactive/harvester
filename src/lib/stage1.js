@@ -18,6 +18,9 @@ async function processStage1() {
   }
 
   let res = await fetch(Settings.registryURL);
+  if (!res.ok) {
+    throw res.status + " - " + res.statusText;
+  }
   let registryJson = await res.json();
 
   for (const publisherKey in registryJson.data) {

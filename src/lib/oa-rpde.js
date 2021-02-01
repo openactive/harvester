@@ -29,6 +29,9 @@ class OpenActiveRpde {
         try {
           log(`Fetching ${nextURL}`);
           let res = await fetch(nextURL);
+          if (!res.ok) {
+            throw res.status + " - " + res.statusText;
+          }
 
           let activitiesJson = await res.json();
 
