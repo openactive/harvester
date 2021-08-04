@@ -12477,7 +12477,7 @@
             "dataset-site-url": "https://data.fitune.io/v1",
             "data-urls": {
               "session-series":"https://data.fitune.io/v1/session-series",
-              "scheduled-sessions":"https://data.fitune.io/v1/scheduled-sessions",
+              "scheduled-sessions":"https://data.fitune.io/v1/scheduled-sessions"
             },
             "uses-paging-spec": true,
             "available": true
