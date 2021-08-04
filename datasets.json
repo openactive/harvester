@@ -10285,8 +10285,8 @@
             "data-urls": {
               "event": "https://playwaze.com/OpenData/Events",
               "sessionSeries": "https://playwaze.com/OpenData/SessionSeries",
-              "scheduledSessions": "https://playwaze.com/OpenData/ScheduledSessions", 
-              "onDemand": "https://playwaze.com/OpenData/OnDemand"  
+              "scheduledSessions": "https://playwaze.com/OpenData/ScheduledSessions",
+              "onDemand": "https://playwaze.com/OpenData/OnDemand"
             },
             "documentation-url": "https://github.com/playwaze/opendata",
             "license-name": "Creative Commons Attribution Licence (CC-BY v4.0)",
@@ -12460,6 +12460,24 @@
               "scheduled-sessions":"https://opendata.leisurecloud.live/api/feeds/EveryoneActiveUAT-uat-scheduled-sessions",
               "facility-uses":"https://opendata.leisurecloud.live/api/feeds/EveryoneActiveUAT-uat-facility-uses",
               "slots":"https://opendata.leisurecloud.live/api/feeds/EveryoneActiveUAT-uat-slots"
+            },
+            "uses-paging-spec": true,
+            "available": true
+        },
+        "school-space/opendata": {
+            "dataset-site-url": "https://openactive.school-space.org/data-sites",
+            "data-urls": {
+              "facility-uses":"https://openactive.school-space.org/facility-uses",
+              "slots":"https://openactive.school-space.org/facility-use-slots"
+            },
+            "uses-paging-spec": true,
+            "available": true
+        },
+        "fitune/opendata": {
+            "dataset-site-url": "https://data.fitune.io/v1",
+            "data-urls": {
+              "session-series":"https://data.fitune.io/v1/session-series",
+              "scheduled-sessions":"https://data.fitune.io/v1/scheduled-sessions",
             },
             "uses-paging-spec": true,
             "available": true
