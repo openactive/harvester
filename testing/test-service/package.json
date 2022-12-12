@@ -4,7 +4,7 @@
   "description": "Harvester test server",
   "main": "src/bin/test-registry",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "lorem-fitsum": "git+https://github.com/openactive/lorem-fitsum.git"
   },
   "scripts": {
